@@ -1,0 +1,16 @@
+#!/bin/bash
+docker stop login
+docker stop game1
+docker stop game2
+docker stop game3
+docker rm login -f
+docker rm game1 -f
+docker rm game2 -f
+docker rm game3 -f
+docker build -t login ../login/
+docker build -t game ../game/
+docker run --name login -p 80:80 -d login
+docker run --name game1 -p 3000:3000 -d game
+docker run --name game2 -p 3001:3000 -d game
+docker run --name game3 -p 3002:3000 -d game
+docker ps
