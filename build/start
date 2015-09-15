@@ -1,21 +1,38 @@
 #!/bin/bash
 # bc no docker-compose in windows. x.x
-docker stop login > /dev/null 2>/dev/null
-docker stop game1 > /dev/null 2>/dev/null
-docker stop game2 > /dev/null 2>/dev/null
-docker stop game3 > /dev/null 2>/dev/null
-docker stop mongo > /dev/null 2>/dev/null
-docker rm login -f > /dev/null 2>/dev/null
-docker rm game1 -f > /dev/null 2>/dev/null
-docker rm game2 -f > /dev/null 2>/dev/null
-docker rm game3 -f > /dev/null 2>/dev/null
-docker rm mongo -f > /dev/null 2>/dev/null
+docker stop login  > /dev/null 2>/dev/null
+docker stop client > /dev/null 2>/dev/null
+docker stop game1  > /dev/null 2>/dev/null
+docker stop game2  > /dev/null 2>/dev/null
+docker stop game3  > /dev/null 2>/dev/null
+docker stop mongo  > /dev/null 2>/dev/null
+docker rm login  -f > /dev/null 2>/dev/null
+docker rm client -f > /dev/null 2>/dev/null
+docker rm game1  -f > /dev/null 2>/dev/null
+docker rm game2  -f > /dev/null 2>/dev/null
+docker rm game3  -f > /dev/null 2>/dev/null
+docker rm mongo  -f > /dev/null 2>/dev/null
+docker build -t client ../client/
 docker build -t login ../login/
 docker build -t game ../game/
 docker build -t mongo ../mongodb/
-docker run --name mongo -p 27017:27017 -d mongo
-docker run --name login --link mongo:mongo -p 80:80 -d login
-docker run --name game1 -p 3000:3000 -d game
-docker run --name game2 -p 3001:3000 -d game
-docker run --name game3 -p 3002:3000 -d game
+
+docker run --name client \
+-p 3000:3000 \
+-d client
+
+docker run --name mongo \
+-p 27017:27017 \
+-d mongo
+
+docker run --name login \
+-e SERVER_KEY=serverpotatoe \
+-e SESSION_KEY=potatoesec \
+--link mongo:mongo \
+-p 80:80 \
+-d login
+
+docker run --name game1 -p 3001:3000 -d game
+docker run --name game2 -p 3002:3000 -d game
+docker run --name game3 -p 3003:3000 -d game
 docker ps

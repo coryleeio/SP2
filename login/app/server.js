@@ -9,11 +9,17 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
-
-var configDB = require('./config/database.js')
+var gameServerConfig = require('./config/game_server_config.js');
+var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
+mongoose.connection.db.dropCollection('servers', function(err, result) {
+	if(err) {
+		console.log(err);
+	}
+	console.log("Removed old servers from db")
+});
 
 require('./config/passport')(passport); // pass passport for configuration
 
@@ -27,7 +33,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
+app.use(session({ secret: process.env.SESSION_KEY })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
