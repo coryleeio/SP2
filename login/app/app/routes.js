@@ -1,4 +1,6 @@
-var gameServerConfig = require('../config/game_server_config.js');
+var auth = require('../config/auth.js');
+var Server = require('./models/server.js');
+var _ = require('underscore');
 
 // app/routes.js
 module.exports = function(app, passport) {
@@ -29,11 +31,26 @@ module.exports = function(app, passport) {
         failureFlash: true
     }));
 
-    app.post('/update_server', serverKeyIsValid, function(req, res){
-        res.send(req.body);
+    app.put('/server', auth.serverKeyIsValid, function(req, res){
+        var server = new Server(req.body);
+        server.save(function(err, server) {
+            if(err) {
+                res.send(501);
+            }
+            else
+            {
+                res.send(201); 
+            }
+        });
     });
 
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/server', auth.isLoggedIn, function(req, res) {
+        Server.find({}, function(err, servers) {
+          res.send(servers);  
+        });
+    });
+
+    app.get('/profile', auth.isLoggedIn, function(req, res) {
         res.render('profile.ejs', {
             user : req.user // get the user out of session and pass to template
         });
@@ -45,27 +62,3 @@ module.exports = function(app, passport) {
     });
 };
 
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated()) {
-        return next();
-    }
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}
-
-function serverKeyIsValid(req, res, next) {
-    if(gameServerConfig['server_key'] == null) {
-        res.send(500);
-        return;
-    }
-
-    if(req.body['server_key'] != null 
-        && req.body['server_key'] === gameServerConfig['server_key']){
-        return next();
-    }   
-    res.send(401);
-}

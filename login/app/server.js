@@ -2,6 +2,7 @@ var express  = require('express');
 var app      = express();
 var port     = 80;
 var path = require('path');
+var os = require('os');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -14,6 +15,7 @@ var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
+console.log(os.hostname());
 mongoose.connection.db.dropCollection('servers', function(err, result) {
 	if(err) {
 		console.log(err);
