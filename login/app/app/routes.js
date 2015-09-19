@@ -15,7 +15,7 @@ module.exports = function(app, passport) {
     });
 
     app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', 
+        successRedirect : '/server', 
         failureRedirect : '/login', 
         failureFlash : true // allow flash messages
     }));
@@ -32,21 +32,58 @@ module.exports = function(app, passport) {
     }));
 
     app.put('/server', auth.serverKeyIsValid, function(req, res){
-        var server = new Server(req.body);
-        server.save(function(err, server) {
+        var parsedServer = new Server(req.body);
+
+
+        Server.findOne({'host': parsedServer.host, 'port': parsedServer.port}, 'host port load', function(err, queriedServer){
             if(err) {
-                res.send(501);
+                return console.error();   
             }
-            else
-            {
-                res.send(201); 
+            if(queriedServer == null){
+                parsedServer.save(function(err, parsedServer) {
+                    if(err) {
+                        console.log("in err...");
+                        res.send(500);
+                    }
+                    else
+                    {
+                        res.send(201); 
+                    }
+                });
             }
+            else {
+                console.log("Updating server...");
+                queriedServer.load = parsedServer.load;
+                queriedServer.save(function(err, server) {
+                    if(err) {
+                        console.log("in err...");
+                        res.send(500);
+                    }
+                    else
+                    {
+                        res.send(202); 
+                    }
+                });
+            }
+            
+        })
+
+
+
+
+    });
+
+    app.get('/server', function(req, res) {
+        res.cookie('loginToken','cookval', { maxAge: 600000, httpOnly: true });
+        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
+            //res.send(servers);
+             res.redirect('http://' + servers[0].host + ':' + servers[0].port);  
         });
     });
 
-    app.get('/server', auth.isLoggedIn, function(req, res) {
-        Server.find({}, function(err, servers) {
-          res.send(servers);  
+    app.get('/servers', function(req, res) {
+        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
+            res.send(servers);
         });
     });
 

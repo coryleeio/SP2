@@ -2,7 +2,6 @@ var express  = require('express');
 var app      = express();
 var port     = 80;
 var path = require('path');
-var os = require('os');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -10,12 +9,10 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
-var gameServerConfig = require('./config/game_server_config.js');
 var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
-console.log(os.hostname());
 mongoose.connection.db.dropCollection('servers', function(err, result) {
 	if(err) {
 		console.log(err);

@@ -1,5 +1,4 @@
 
-var gameServerConfig = require('./game_server_config.js');
 module.exports = {
     isLoggedIn: function(req, res, next) {
         // if user is authenticated in the session, carry on 
@@ -10,13 +9,14 @@ module.exports = {
         res.redirect('/');
     },
     serverKeyIsValid: function(req, res, next) {
-        if(gameServerConfig['server_key'] == null) {
+        var server_shared_secret = process.env.SHARED_SERVER_SECRET;
+        if(server_shared_secret == null) {
             res.send(500);
             return;
         }
 
-        if(req.body['server_key'] != null 
-            && req.body['server_key'] === gameServerConfig['server_key']){
+        if(req.body['server_shared_secret'] != null 
+            && req.body['server_shared_secret'] === server_shared_secret){
             return next();
         }   
         res.send(401);
