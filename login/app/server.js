@@ -10,7 +10,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var configDB = require('./config/database');
-var mandatory = require('./config/force-env') // No semicolon.
+var mandatory = require('./common/config/force-env') // No semicolon.
 (['SHARED_SERVER_SECRET','SESSION_KEY']);
 
 // configuration ===============================================================
