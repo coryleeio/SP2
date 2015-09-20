@@ -6,6 +6,11 @@
 export HOST=192.168.99.100
 export SHARED_SERVER_SECRET=serverpotatoe
 
+rm -rf ./login/common/*;
+rm -rf ./game/common/*;
+cp -R common/* ./login/common/
+cp -R common/* ./game/common/
+
 docker stop login  > /dev/null 2>/dev/null
 docker stop client > /dev/null 2>/dev/null
 docker stop game1  > /dev/null 2>/dev/null

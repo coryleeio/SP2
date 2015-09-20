@@ -10,6 +10,7 @@
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.0",
     "request-promise": "0.4.3",
-    "cron": "1.0.9"
+    "cron": "1.0.9",
+    "node-forge": "0.6.34"
   }
 }

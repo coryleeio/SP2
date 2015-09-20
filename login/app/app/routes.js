@@ -1,6 +1,7 @@
 var auth = require('../config/auth.js');
 var Server = require('./models/server.js');
 var _ = require('underscore');
+var forge = require('node-forge');
 
 // app/routes.js
 module.exports = function(app, passport) {
@@ -26,23 +27,21 @@ module.exports = function(app, passport) {
     });
 
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/profile',
+        successRedirect: '/server',
         failureRedirect: '/signup',
         failureFlash: true
     }));
 
     app.put('/server', auth.serverKeyIsValid, function(req, res){
         var parsedServer = new Server(req.body);
-
-
-        Server.findOne({'host': parsedServer.host, 'port': parsedServer.port}, 'host port load', function(err, queriedServer){
+        Server.findOne({'host': parsedServer.host, 'port': parsedServer.port}, function(err, queriedServer){
             if(err) {
                 return console.error();   
             }
             if(queriedServer == null){
                 parsedServer.save(function(err, parsedServer) {
                     if(err) {
-                        console.log("in err...");
+                        console.log(err);
                         res.send(500);
                     }
                     else
@@ -52,11 +51,10 @@ module.exports = function(app, passport) {
                 });
             }
             else {
-                console.log("Updating server...");
                 queriedServer.load = parsedServer.load;
                 queriedServer.save(function(err, server) {
                     if(err) {
-                        console.log("in err...");
+                        console.log(err);
                         res.send(500);
                     }
                     else
@@ -65,18 +63,15 @@ module.exports = function(app, passport) {
                     }
                 });
             }
-            
         })
-
-
-
-
     });
 
-    app.get('/server', function(req, res) {
+    app.get('/server', auth.isLoggedIn, function(req, res) {
         res.cookie('loginToken','cookval', { maxAge: 600000, httpOnly: true });
         Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-            //res.send(servers);
+             if(servers.length == 0) {
+                return res.redirect('/server_down');
+             }
              res.redirect('http://' + servers[0].host + ':' + servers[0].port);  
         });
     });
@@ -85,6 +80,10 @@ module.exports = function(app, passport) {
         Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
             res.send(servers);
         });
+    });
+
+    app.get('/server_down', function(req, res) {
+        res.render('server_down.ejs');
     });
 
     app.get('/profile', auth.isLoggedIn, function(req, res) {
