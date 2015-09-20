@@ -2,6 +2,9 @@ var http = require('http');
 var express = require('express');
 var cookieParser = require('cookie-parser')
 var heartBeat = require('./heartbeat.js');
+var mandatory = require('./common/config/force-env') // No semicolon.
+(['LOGIN_SERVER_HOST','LOGIN_SERVER_PORT','SHARED_SERVER_SECRET','HOST','PORT']);
+
 var app = express();
 app.use(cookieParser());
 
