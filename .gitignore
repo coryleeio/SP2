@@ -1,2 +1,2 @@
-login/common/**
-game/common/**
+./login/app/common/**
+./game/app/common/**
