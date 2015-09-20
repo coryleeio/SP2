@@ -2,10 +2,8 @@ var requestPromise = require('request-promise');
 var cronJob = require("cron").CronJob;
 var gameConfig = require('./config/game_server_config.js');
 var loginConfig = require('./config/login_server_config.js');
-var forge = require('node-forge');
-var md = forge.md.sha256.create();
-md.update(gameConfig.shared_server_secret);
-var digestedServerSecret = md.digest().toHex();
+var SHA256 = require("crypto-js/sha256");
+var digestedServerSecret = SHA256(gameConfig.shared_server_secret).toString();
 
 module.exports = function(){
 	var heartBeat = {
@@ -23,7 +21,6 @@ module.exports = function(){
 
 	new cronJob("*/2 * * * * *", function() {
 	    requestPromise(options)
-	        .then(console.log('ran hearbeat successfully!'))
 	        .catch(console.error);
 	}, null, true);
 };

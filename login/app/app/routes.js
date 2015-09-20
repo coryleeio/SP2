@@ -1,8 +1,6 @@
 var auth = require('../config/auth.js');
 var Server = require('./models/server.js');
 var _ = require('underscore');
-var forge = require('node-forge');
-
 // app/routes.js
 module.exports = function(app, passport) {
 
@@ -67,12 +65,16 @@ module.exports = function(app, passport) {
     });
 
     app.get('/server', auth.isLoggedIn, function(req, res) {
-        res.cookie('loginToken','cookval', { maxAge: 600000, httpOnly: true });
         Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-             if(servers.length == 0) {
-                return res.redirect('/server_down');
-             }
-             res.redirect('http://' + servers[0].host + ':' + servers[0].port);  
+            if(servers.length == 0) {
+               return res.redirect('/server_down');
+            }
+            var host = servers[0].host;
+            var port = servers[0].port;
+            var loginToken = auth.generateLoginToken(req.user.id, host, port);
+            console.log("login token is: " + loginToken);
+            res.cookie('loginToken', loginToken, { maxAge: 600000, httpOnly: true });
+            res.redirect('http://' + host + ':' + port);  
         });
     });
 
