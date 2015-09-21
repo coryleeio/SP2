@@ -32,9 +32,6 @@ module.exports = {
 
         var tokenDate = new Date(login.expiry);
         var currentDate = new Date();
-        console.log(tokenDate);
-        console.log(currentDate);
-        console.log(tokenDate > currentDate);
         if(tokenDate < currentDate) {
         	console.log('user: ' + login.user_id + 'Login token has expired!');
         	return false;
