@@ -5,4 +5,4 @@ RUN sudo apt-get install nodejs -y
 ADD ./app /app
 EXPOSE 3000
 RUN cd /app && npm install
-CMD ["node", "/app/app.js"]
+CMD ["node", "/app/server.js"]
