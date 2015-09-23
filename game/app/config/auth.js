@@ -18,23 +18,24 @@ module.exports = {
         var dateCheck = tokenDate < currentDate;
 
         if(valid_user_id && valid_user_display && correct_host && isExpired && dateCheck) {
+        	console.log('Authentication successful for ' + login.user_id);
         	return true;
         }
 
 		if(!valid_user_id) {
-			console.log('got request without a user id??');
+			console.log('Received request without a user id.');
 		}
 		if(!valid_user_display) {
-			console.log('user: ' + login.user_id + 'logging in without display name.');
+			console.log('User: ' + login.user_id + 'Logging in without display name.');
 		}
 		if(!correct_host) {
-			console.log('user: ' + login.user_id + ' attempting to log into wrong host.');
+			console.log('User: ' + login.user_id + 'Attempting to log into wrong host.');
 		}
 		if(!isExpired) {
-			console.log('user: ' + login.user_id + 'expiry not specified.');
+			console.log('User: ' + login.user_id + 'Expiry not specified.');
 		}
 		if(!dateCheck) {
-			console.log('user: ' + login.user_id + 'Login token has expired!');
+			console.log('User: ' + login.user_id + 'Login token has expired!');
 		}
         return false;
     }
