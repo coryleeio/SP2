@@ -63,8 +63,8 @@ docker run --name mongo \
 docker run --name login \
 -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
 -e SESSION_KEY=$SESSION_KEY \
--e CLIENT_HOST=$HOST
--e CLIENT_PORT=$CLIENT_PORT
+-e CLIENT_HOST=$HOST \
+-e CLIENT_PORT=$CLIENT_PORT \
 --link mongo:mongo \
 -p $LOGIN_PORT:$LOGIN_PORT \
 -d login

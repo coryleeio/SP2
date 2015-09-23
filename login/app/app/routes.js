@@ -1,6 +1,8 @@
 var auth = require('../config/auth.js');
 var Server = require('./models/server.js');
 var _ = require('underscore');
+var clientServerConfig = require('../config/client_server_config');
+
 module.exports = function(app, passport) {
 
     app.get('/', function(req, res) {
@@ -73,7 +75,7 @@ module.exports = function(app, passport) {
             res.cookie('loginToken', loginToken, { maxAge: 600000, httpOnly: true });
             res.cookie('host', host, { maxAge: 600000, httpOnly: true });
             res.cookie('port', port, { maxAge: 600000, httpOnly: true });
-            res.redirect('http://' + host + ':' + port);  
+            res.redirect('http://' + clientServerConfig.host + ':' + clientServerConfig.port);  
         });
     });
 
