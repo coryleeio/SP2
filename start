@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# This is mostly for easy dev setup
+# bc no docker-compose in windows. x.x
+
+# Inputs... you may need to tweak these for your environment, 
+# I'm running this in windows, so the host was the ip of my docker host.
+export HOST=192.168.99.100
+
+# Change these obv.
+export SHARED_SERVER_SECRET=serverpotatoe
+export SESSION_KEY=potatoesec
+
+# Ports
+export LOGIN_PORT=80
+export CLIENT_PORT=3000
+export GAME1_PORT=3001
+export GAME2_PORT=3002
+export GAME3_PORT=3003
+export MONGO_PORT=27017
+
+
+
+# Remove old containers
+rm -rf ./login/app/common/*;
+rm -rf ./game/app/common/*;
+rm -rf ./client/app/common/*
+
+# Copy common code into respective projects.
+cp -R ./common/* ./login/app/common/
+cp -R ./common/* ./game/app/common/
+cp -R ./common/* ./client/app/common/
+
+# Stop and remove any old containers
+docker stop login  > /dev/null 2>/dev/null
+docker stop client > /dev/null 2>/dev/null
+docker stop game1  > /dev/null 2>/dev/null
+docker stop game2  > /dev/null 2>/dev/null
+docker stop game3  > /dev/null 2>/dev/null
+docker stop mongo  > /dev/null 2>/dev/null
+docker rm login  -f > /dev/null 2>/dev/null
+docker rm client -f > /dev/null 2>/dev/null
+docker rm game1  -f > /dev/null 2>/dev/null
+docker rm game2  -f > /dev/null 2>/dev/null
+docker rm game3  -f > /dev/null 2>/dev/null
+docker rm mongo  -f > /dev/null 2>/dev/null
+
+# build the various images.
+docker build -t client ./client/
+docker build -t login ./login/
+docker build -t game ./game/
+docker build -t mongo ./mongodb/
+
+# Run containers.
+docker run --name client \
+-p $CLIENT_PORT:$CLIENT_PORT \
+-d client
+
+docker run --name mongo \
+-p $MONGO_PORT:$MONGO_PORT \
+-d mongo
+
+docker run --name login \
+-e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
+-e SESSION_KEY=$SESSION_KEY \
+-e CLIENT_HOST=$HOST
+-e CLIENT_PORT=$CLIENT_PORT
+--link mongo:mongo \
+-p $LOGIN_PORT:$LOGIN_PORT \
+-d login
+
+docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME1_PORT --name game1 -p $GAME1_PORT:3000 -d game
+docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME2_PORT --name game2 -p $GAME2_PORT:3000 -d game
+docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME3_PORT --name game3 -p $GAME3_PORT:3000 -d game

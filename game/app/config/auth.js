@@ -7,35 +7,35 @@ module.exports = {
         var key = process.env.SHARED_SERVER_SECRET;
         var bytes  = CryptoJS.AES.decrypt(loginToken.toString(), key);
         var login = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-        if(login.user_id == null) {
-        	console.log('got request without a user id??');
-        	console.log(JSON.stringify(login));
-        	return false;
-        }
-
-        if(login.user_display == null) {
-        	console.log('user: ' + login.user_id + 'logging in without display name.');
-        	return false;
-        }
-
-        if((login.host == null || login.host != process.env.HOST) || 
-        	(login.port == null || login.port != process.env.PORT)) {
-        	console.log('user: ' + login.user_id + ' attempting to log into wrong host.');
-        	return false;
-        }
-
-        if(login.expiry == null) {
-        	console.log('user: ' + login.user_id + 'expiry not specified.');
-        	return false;
-        }
-
         var tokenDate = new Date(login.expiry);
         var currentDate = new Date();
-        if(tokenDate < currentDate) {
-        	console.log('user: ' + login.user_id + 'Login token has expired!');
-        	return false;
+
+        var valid_user_id = login.user_id == null;
+        var valid_user_display = login.user_display == null;
+        var correct_host = (login.host == null || login.host != process.env.HOST) || 
+        	(login.port == null || login.port != process.env.PORT);
+        var isExpired = login.expiry == null;
+        var dateCheck = tokenDate < currentDate;
+
+        if(valid_user_id && valid_user_display && correct_host && isExpired && dateCheck) {
+        	return true;
         }
-        return true;
+
+		if(!valid_user_id) {
+			console.log('got request without a user id??');
+		}
+		if(!valid_user_display) {
+			console.log('user: ' + login.user_id + 'logging in without display name.');
+		}
+		if(!correct_host) {
+			console.log('user: ' + login.user_id + ' attempting to log into wrong host.');
+		}
+		if(!isExpired) {
+			console.log('user: ' + login.user_id + 'expiry not specified.');
+		}
+		if(!dateCheck) {
+			console.log('user: ' + login.user_id + 'Login token has expired!');
+		}
+        return false;
     }
 };

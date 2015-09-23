@@ -71,6 +71,8 @@ module.exports = function(app, passport) {
             var loginToken = auth.generateLoginToken(req.user.id, host, port);
             console.log("login token is: " + loginToken);
             res.cookie('loginToken', loginToken, { maxAge: 600000, httpOnly: true });
+            res.cookie('host', host, { maxAge: 600000, httpOnly: true });
+            res.cookie('port', port, { maxAge: 600000, httpOnly: true });
             res.redirect('http://' + host + ':' + port);  
         });
     });
