@@ -10,7 +10,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var configDB = require('./config/database');
 var mandatory = require('./common/config/force-env') // No semicolon.
-(['SHARED_SERVER_SECRET','SESSION_KEY','CLIENT_HOST','CLIENT_PORT']);
+(['SHARED_SERVER_SECRET','SESSION_KEY']);
 
 var app      = express();
 
@@ -23,6 +23,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 });
 
 require('./config/passport')(passport); 
+app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
 app.use(bodyParser.json()); 

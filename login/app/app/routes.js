@@ -1,7 +1,6 @@
 var auth = require('../config/auth.js');
 var Server = require('./models/server.js');
 var _ = require('underscore');
-var clientServerConfig = require('../config/client_server_config');
 
 module.exports = function(app, passport) {
 
@@ -13,21 +12,21 @@ module.exports = function(app, passport) {
         res.render('login.ejs', { message: req.flash('loginMessage') }); 
     });
 
-    app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/server', 
-        failureRedirect : '/login', 
-        failureFlash : true // allow flash messages
-    }));
-
-    app.get('/signup', function(req, res) {
-        res.render('signup.ejs', { message: req.flash('signupMessage') });
+    app.post('/login',
+    passport.authenticate('local-login'), function(req, res){
+        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
+            if(servers.length == 0) {
+               return res.redirect('/server_down');
+            }
+            var host = servers[0].host;
+            var port = servers[0].port;
+            var loginToken = auth.generateLoginToken(req.user.id, host, port);
+            res.cookie('loginToken', loginToken, { maxAge: 1200000, httpOnly: true });
+            res.cookie('gameHost', host, { maxAge: 1200000, httpOnly: true });
+            res.cookie('gamePort', port, { maxAge: 1200000, httpOnly: true });
+            res.send(204);
+        });
     });
-
-    app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/server',
-        failureRedirect: '/signup',
-        failureFlash: true
-    }));
 
     app.put('/server', auth.serverKeyIsValid, function(req, res){
         var parsedServer = new Server(req.body);
@@ -61,22 +60,6 @@ module.exports = function(app, passport) {
                 });
             }
         })
-    });
-
-    app.get('/server', auth.isLoggedIn, function(req, res) {
-        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-            if(servers.length == 0) {
-               return res.redirect('/server_down');
-            }
-            var host = servers[0].host;
-            var port = servers[0].port;
-            var loginToken = auth.generateLoginToken(req.user.id, host, port);
-            console.log("login token is: " + loginToken);
-            res.cookie('loginToken', loginToken, { maxAge: 600000, httpOnly: true });
-            res.cookie('host', host, { maxAge: 600000, httpOnly: true });
-            res.cookie('port', port, { maxAge: 600000, httpOnly: true });
-            res.redirect('http://' + clientServerConfig.host + ':' + clientServerConfig.port);  
-        });
     });
 
     app.get('/servers', function(req, res) {

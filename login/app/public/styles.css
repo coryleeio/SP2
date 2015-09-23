@@ -1,0 +1,11 @@
+.fa-padding {
+    padding-right:5px;
+}
+
+.loginModal .modal-dialog {
+	min-width:400px;
+}
+
+.loginModal .modal-body {
+	white-space:nowrap;
+}

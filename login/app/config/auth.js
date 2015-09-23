@@ -9,7 +9,7 @@ module.exports = {
 
         var key = process.env.SHARED_SERVER_SECRET;
         var expiry = new Date();
-        expiry = expiry.setMinutes(expiry.getMinutes() + 5);
+        expiry = expiry.setMinutes(expiry.getMinutes() + 15);
         message = JSON.stringify({
             user_id: user_id,
             user_display: 'ffff',

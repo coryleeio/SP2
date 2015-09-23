@@ -8,6 +8,7 @@ module.exports = function(app, io) {
 	  var loginToken = cookies.loginToken;
 	  if(auth.validateLoginToken(loginToken))
 	  {
+	  	console.log('user token was valid.');
 	  	return next();
 	  }
 	  console.log('user token was not valid.');
