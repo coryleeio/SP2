@@ -8,25 +8,9 @@ module.exports = function(app, passport) {
         res.render('index.ejs'); 
     });
 
-    app.get('/login', function(req, res) {
-        res.render('login.ejs', { message: req.flash('loginMessage') }); 
-    });
-
-    app.post('/login',
-    passport.authenticate('local-login'), function(req, res){
-        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-            if(servers.length == 0) {
-               return res.redirect('/server_down');
-            }
-            var host = servers[0].host;
-            var port = servers[0].port;
-            var loginToken = auth.generateLoginToken(req.user.id, host, port);
-            res.cookie('loginToken', loginToken, { maxAge: 1200000, httpOnly: true });
-            res.cookie('gameHost', host, { maxAge: 1200000, httpOnly: true });
-            res.cookie('gamePort', port, { maxAge: 1200000, httpOnly: true });
-            res.send(204);
-        });
-    });
+    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+    app.get('/auth/google/callback', passport.authenticate('google'), auth.authorizeForServer);
+    app.get('/login', auth.authorizeForServer);
 
     app.put('/server', auth.serverKeyIsValid, function(req, res){
         var parsedServer = new Server(req.body);

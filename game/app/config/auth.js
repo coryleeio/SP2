@@ -10,24 +10,15 @@ module.exports = {
         var tokenDate = new Date(login.expiry);
         var currentDate = new Date();
 
-        var valid_user_id = login.user_id == null;
-        var valid_user_display = login.user_display == null;
-        var correct_host = (login.host == null || login.host != process.env.HOST) || 
-        	(login.port == null || login.port != process.env.PORT);
-        var isExpired = login.expiry == null;
-        var dateCheck = tokenDate < currentDate;
+        var correct_host = login.host != null && login.host == process.env.HOST &&
+        	login.port != null && login.port == process.env.PORT;
+        var providedExpiration = login.expiry != null;
+        var isExpired = tokenDate > currentDate;
 
-        if(valid_user_id && valid_user_display && correct_host && isExpired && dateCheck) {
+        if( correct_host && providedExpiration && !isExpired) {
         	console.log('Authentication successful for ' + login.user_id);
         	return true;
         }
-
-		if(!valid_user_id) {
-			console.log('Received request without a user id.');
-		}
-		if(!valid_user_display) {
-			console.log('User: ' + login.user_id + 'Logging in without display name.');
-		}
 		if(!correct_host) {
 			console.log('User: ' + login.user_id + 'Attempting to log into wrong host.');
 		}
