@@ -1,5 +1,5 @@
 define:
-
+```
 	#!/bin/bash
 	export GAME_HOSTNAME=XXX.XXX.XXX.XXX
 	export GOOGLE_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -12,5 +12,6 @@ define:
 	export GAME2_PORT=xxxx
 	export GAME3_PORT=xxxx
 	export MONGO_PORT=27017
+```
 
 `./start`
