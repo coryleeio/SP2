@@ -3,20 +3,6 @@
 # This is mostly for easy dev setup
 # bc no docker-compose in windows. x.x
 
-# Inputs, make a file external to your git checkin, and source these variables.
-# Or export them manually.
-export HOST=$GAME_HOSTNAME
-export GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-export GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-export GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL
-export SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET
-export SESSION_KEY=$SESSION_KEY
-export LOGIN_PORT=$LOGIN_PORT
-export GAME1_PORT=$GAME1_PORT
-export GAME2_PORT=$GAME2_PORT
-export GAME3_PORT=$GAME3_PORT
-export MONGO_PORT=$MONGO_PORT
-
 # Stop and remove any old containers
 docker stop login  > /dev/null 2>/dev/null
 docker stop game1  > /dev/null 2>/dev/null
@@ -36,7 +22,7 @@ docker build -t game ./game/
 
 # Run containers.
 docker run --name mongo \
--p $MONGO_PORT:$MONGO_PORT \
+-p $MONGO_PORT:27017 \
 -d mongo
 
 docker run --name login \
@@ -49,6 +35,6 @@ docker run --name login \
 -p $LOGIN_PORT:$LOGIN_PORT \
 -d login
 
-docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME1_PORT --name game1 -p $GAME1_PORT:3000 -d game
-docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME2_PORT --name game2 -p $GAME2_PORT:3000 -d game
-docker run -e LOGIN_SERVER_HOST=$HOST -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$HOST -e PORT=$GAME3_PORT --name game3 -p $GAME3_PORT:3000 -d game
+docker run -e LOGIN_SERVER_HOST=$GAME_HOSTNAME -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$GAME_HOSTNAME -e PORT=$GAME1_PORT --name game1 -p $GAME1_PORT:3000 -d game
+docker run -e LOGIN_SERVER_HOST=$GAME_HOSTNAME -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$GAME_HOSTNAME -e PORT=$GAME2_PORT --name game2 -p $GAME2_PORT:3000 -d game
+docker run -e LOGIN_SERVER_HOST=$GAME_HOSTNAME -e LOGIN_SERVER_PORT=$LOGIN_PORT -e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET -e HOST=$GAME_HOSTNAME -e PORT=$GAME3_PORT --name game3 -p $GAME3_PORT:3000 -d game
