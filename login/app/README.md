@@ -1,4 +1,5 @@
 define:
+
 ```
 	#!/bin/bash
 	export GAME_HOSTNAME=XXX.XXX.XXX.XXX
