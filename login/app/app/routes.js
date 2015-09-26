@@ -5,7 +5,9 @@ var _ = require('underscore');
 module.exports = function(app, passport) {
 
     app.get('/', function(req, res) {
-        res.render('index.ejs'); 
+        res.render('index.ejs', {
+            googleClientId : auth.googleAuth.clientID
+        });
     });
 
     app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));

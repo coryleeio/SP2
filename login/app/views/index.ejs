@@ -8,18 +8,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css">
-    <script>$(document).ready(function () {
-      $('.loginModal').modal({
-          backdrop: 'static',
-          keyboard: false
-      })
-      $('.loginModal').modal('show');
-      $('[data-toggle="tooltip"]').tooltip(); 
-    });
-    </script>
-    <style>
-        body        { padding-top:80px; }
-    </style>
+    <script> var googleClientId = '<%= googleClientId%>'</script>
+    <script src="login.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 </head>
 <body>
   <div class="modal loginModal">
@@ -29,9 +20,9 @@
           <h2 class="modal-title"> <span class="fa fa-lock fa-padding"></span>Welcome! </h2>
         </div>
         <div class="modal-body">
-          <a href="/login" class="btn btn-success"><span class="fa fa-play fa-padding"></span> Play</a>
-          <a href="/auth/google" class="btn btn-info btn-danger" data-toggle="tooltip" data-placement="bottom" title="Log in with google plus and get things"><span class="fa fa-google-plus fa-padding"></span> Log in and Play</a>
-          <a href="/login" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Log in with google plus and get stuff"><span class="fa fa-facebook fa-padding"></span> Log in and Play</a>
+          <a href="/login" class="main-login btn btn-success"><span class="fa fa-play fa-padding"></span> Play as Guest</a>
+          <a href="" id="google-login" class="btn btn-info btn-danger google-login" data-toggle="tooltip" data-placement="bottom" title="Log in with google plus and get things"><span class="fa fa-google-plus fa-padding"></span> Log in and Play</a>
+          <a href="/login" id= "facebook-login" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Log in with google plus and get stuff"><span class="fa fa-facebook fa-padding"></span> Log in and Play</a>
         </div>
         <div class="modal-footer">
         </div>
