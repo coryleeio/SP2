@@ -37,8 +37,8 @@ module.exports = {
             var ciphertext = AES.encrypt(message, key);
             var loginToken = ciphertext.toString();
             res.cookie('loginToken', loginToken, { maxAge: 1200000, httpOnly: true });
-            res.cookie('gameHost', host, { maxAge: 1200000, httpOnly: true });
-            res.cookie('gamePort', port, { maxAge: 1200000, httpOnly: true });
+            res.cookie('gameHost', host, { maxAge: 1200000});
+            res.cookie('gamePort', port, { maxAge: 1200000});
             res.send(204);
         });
     },

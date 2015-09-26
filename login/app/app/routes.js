@@ -48,11 +48,11 @@ module.exports = function(app, passport) {
         })
     });
 
-    app.get('/servers', function(req, res) {
-        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-            res.send(servers);
-        });
-    });
+    // app.get('/servers', function(req, res) {
+    //     Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
+    //         res.send(servers);
+    //     });
+    // });
 
     app.get('/server_down', function(req, res) {
         res.render('server_down.ejs');
