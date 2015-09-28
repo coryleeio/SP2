@@ -28,6 +28,5 @@ var userSchema = mongoose.Schema({
     updated_at    : { type: Date, required: true }
 });
 
-var common = require('./model_entity.js')(userSchema);
-
+require('./model_entity.js')(userSchema);
 module.exports = mongoose.model('User', userSchema);

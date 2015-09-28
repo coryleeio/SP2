@@ -14,7 +14,13 @@ var mandatory = require('./_common/serverside/force-env')([
 ]);
 
 var app      = express();
-mongoose.connect(configDB.url); 
+//-> CONFIGURATION
+mongoose.connect(configDB.url, function(err) {
+  if (err) {
+    console.log("Could not connect to database");
+    throw err;
+  }
+});
 mongoose.connection.db.dropCollection('servers', function(err, result) {
 	if(err) {
 		console.log(err);
@@ -22,7 +28,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 	console.log("Removed old servers from db")
 });
 
-require('./config/passport')(passport); 
+
 app.use(express.static(__dirname + '/app/public'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
@@ -36,8 +42,9 @@ app.use(session({
 	secret: process.env.SESSION_KEY,
 	store: new MongoStore({mongooseConnection: mongoose.connection})
 })); 
+require('./_common/serverside/config/passport')(passport); 
 app.use(passport.initialize());
 app.use(passport.session()); 
 
-require('./config/routes.js')(app, passport);
+require('./config/routes')(app, passport);
 app.listen(port);

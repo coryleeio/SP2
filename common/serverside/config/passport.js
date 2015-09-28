@@ -2,8 +2,8 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var GoogleStrategy  = require('passport-google-oauth').OAuth2Strategy;
 // load up the user model
-var User            = require('../app/models/user');
-var Server          = require('../app/models/server');
+var User            = require('../models/user');
+var Server          = require('../models/server');
 
 var googleConfig    = require('./googleConfig');
 

@@ -1,7 +1,7 @@
 var auth = require('../app/auth');
-var Server = require('../app/models/server');
+var Server = require('../_common/serverside/models/server');
 var _ = require('underscore');
-var googleConfig    = require('./googleConfig');
+var googleConfig    = require('../_common/serverside/config/googleConfig');
 
 module.exports = function(app, passport) {
 

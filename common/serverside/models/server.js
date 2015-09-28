@@ -9,7 +9,5 @@ var serverSchema = mongoose.Schema({
         updated_at    : { type: Date, required: true }
 });
 
-var common = require('./model_entity.js')(serverSchema);
-
-// create the model for users and expose it to our app
+require('./model_entity.js')(serverSchema);
 module.exports = mongoose.model('Server', serverSchema);

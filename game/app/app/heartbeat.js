@@ -13,8 +13,6 @@ module.exports = function(){
 		key: digestedServerSecret
 	};
 
-	console.log(heartBeat);
-
 	var options = {
 	    uri : 'http://' + loginConfig.host + ':' + loginConfig.port + '/server',
 	    method : 'PUT',

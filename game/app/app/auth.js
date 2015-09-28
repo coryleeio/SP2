@@ -6,11 +6,8 @@ module.exports = {
           accept();
         },
         onAuthorizeFail: function(data, message, error, accept){
-          if(error)
-            throw new Error(message);
           console.log('failed connection to socket.io:', message);
           if(error)
             accept(new Error(message));
         }
-    }
 };

@@ -1,7 +1,7 @@
 var AES = require("crypto-js/aes");
 var SHA256 = require("crypto-js/sha256");
 var digestedServerSecret = SHA256(process.env.SHARED_SERVER_SECRET);
-var Server = require('../app/models/server.js');
+var Server = require('../_common/serverside/models/server.js');
 module.exports = {
     setServerTargetCookies: function(req, res) {
         Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
