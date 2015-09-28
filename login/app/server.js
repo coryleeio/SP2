@@ -9,7 +9,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var configDB = require('./config/database');
-var mandatory = require('./common/config/force-env')([
+var mandatory = require('./_common/serverside/force-env')([
 	'SHARED_SERVER_SECRET','SESSION_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'
 ]);
 
@@ -23,7 +23,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 });
 
 require('./config/passport')(passport); 
-app.use(express.static(__dirname + 'app/public'));
+app.use(express.static(__dirname + '/app/public'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
 app.use(bodyParser.json()); 

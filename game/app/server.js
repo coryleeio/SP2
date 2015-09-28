@@ -9,7 +9,7 @@ var io = require('socket.io')();
 var cookieParser = require('cookie-parser')
 var heartBeat = require('./app/heartbeat.js');
 var auth      = require('./app/auth');
-var mandatory = require('./common/config/force-env')([
+var mandatory = require('./_common/serverside/force-env')([
 	'SESSION_KEY','SERVER_REGISTRATION_HOST', 'SERVER_REGISTRATION_PORT','SHARED_SERVER_SECRET','HOST','PORT'
 ]);
 

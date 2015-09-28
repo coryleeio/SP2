@@ -19,8 +19,10 @@ docker rm mongo  -f > /dev/null 2>/dev/null
 rm -rf ./game/app/_common
 rm -rf ./login/app/_common
 
-cp -a /common/. ./game/app/_common/
-cp -a /common/. ./login/app/_common/
+mkdir ./game/app/_common
+mkdir ./login/app/_common
+cp -a ./common/. ./game/app/_common/
+cp -a ./common/. ./login/app/_common/
 
 # build the various images.
 docker build -t mongo ./mongodb/

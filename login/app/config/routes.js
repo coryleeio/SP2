@@ -1,19 +1,24 @@
 var auth = require('../app/auth');
 var Server = require('../app/models/server');
 var _ = require('underscore');
+var googleConfig    = require('./googleConfig');
 
 module.exports = function(app, passport) {
 
     app.get('/', function(req, res) {
-        res.render('index.ejs', {
-            googleClientId : auth.googleAuth.clientID
+        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
+            if(servers.length <= 0) {
+                return res.render('server_down.ejs');
+            }
+            res.render('index.ejs', {
+                googleClientId : googleConfig.clientID
+            });
         });
     });
 
     app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
     app.get('/auth/google/callback', passport.authenticate('google'), auth.setServerTargetCookies);
     app.get('/login', auth.setServerTargetCookies);
-
     app.put('/server', auth.serverKeyIsValid, function(req, res){
         console.log("Server key was valid.")
         var parsedServer = new Server(req.body);
@@ -50,17 +55,6 @@ module.exports = function(app, passport) {
     app.get('/servers', function(req, res) {
         Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
             res.send(servers);
-        });
-    });
-
-    app.get('/server_down', function(req, res) {
-        Server.find({}).sort({load: 'ascending'}).exec(function(err, servers) {
-            if(servers.length <= 0) {
-                console.log("ffff" + servers.length);
-                return res.render('server_down.ejs');
-            }
-            console.log("xxx" + servers.length);
-            return res.redirect('/');
         });
     });
 
