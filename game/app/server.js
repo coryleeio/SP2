@@ -24,8 +24,9 @@ io.use(passportSocketIo.authorize({
   secret:       process.env.SESSION_KEY,   
   store:        new MongoStore({mongooseConnection: mongoose.connection}),        
   success:      auth.onAuthorizeSuccess,  
-  fail:         auth.onAuthorizeFail,    
+  fail:         auth.onAuthorizeFail 
 }));
+
 require('./_common/serverside/config/passport')(passport); 
 app.use(passport.initialize());
 app.use(passport.session()); 

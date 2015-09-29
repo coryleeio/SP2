@@ -5,9 +5,22 @@ var auth   = require('../app/auth')
 module.exports = function(app, io) {
 
 	io.on('connection', function(socket){
-	  console.log('a user connected');
+	  if(socket.request.user.logged_in) {
+	  	console.log('User: ' + socket.request.user.google.email + ' has connected.');
+	  }
+	  else {
+	  	console.log('An anonymous user has connected.');
+	  }
 	  socket.on('disconnect', function(){
-	    console.log('user disconnected');
+	  	if(socket.request.user != null && socket.request.user.google != null)
+	  	{
+	  		console.log('User: ' + socket.request.user.google.email + ' has disconnected.');
+	  	}
+	  	else
+	  	{
+	  		console.log('An anonymous user has disconnected');
+	  	}
+
 	  });
 	});
 };

@@ -10,22 +10,42 @@ function checkAuth() {
 
 // Idempotent auth handler.
 function handleAuthResult(authResult) {
-	var authorizeButton = document.getElementById('google-login');
-	var facebookButton = document.getElementById('facebook-login');
+    var googleButton = $(".google-login");
+    var facebookButton = $(".facebook-login");
 	var playButton = $(".main-login");
 	if (authResult && !authResult.error) {
-      authorizeButton.style.display = 'none';
-      facebookButton.style.display = 'none';
+      // authenticated
+      googleButton.css('display', 'none');
+      facebookButton.css('display', 'none');
       playButton.text("Play");
       makeApiCall();
     } else {
-      authorizeButton.style.display = '';
-      facebookButton.style.display = '';
-      authorizeButton.onclick = handleAuthClick;
+      // not authenticated
+      facebookButton.css('display', '');
+      facebookButton.css('display', '');
+      googleButton.click(handleGoogleClick);
 	}
+    playButton.click(handlePlayClick);
 }
 
-function handleAuthClick(event) {
+function handlePlayClick(event) {
+
+    $.ajax({
+       url: "/server",
+       type: "GET",
+       success: function(response) {
+        var gameUrl = "http://" + response.host + ":" + response.port;
+        console.log("Connecting to game server at: " + gameUrl);
+        var socket = io( gameUrl );
+        $('.loginModal').modal('hide');
+       },
+       error: function(messages) {
+         alert("Could not connect to server.");
+       }
+     });
+}
+
+function handleGoogleClick(event) {
 // Step 3: get authorization to use private data
 gapi.auth.authorize({client_id: googleClientId, scope: scopes, immediate: false}, handleAuthResult);
 	return false;
@@ -49,41 +69,14 @@ function makeApiCall() {
 	});
 }
 
-function getCookie(cname) {
-	console.log("Seeking cookie: " + cname);
-	console.log(document.cookie);
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
 
-// Display modal when first arriving on page.
-// Initialize tooltips
 $(document).ready(function () {
+    // Display modal when first arriving on page.
+    // Initialize tooltips
      $('.loginModal').modal({
          backdrop: 'static',
          keyboard: false
      })
      $('.loginModal').modal('show');
      $('[data-toggle="tooltip"]').tooltip(); 
-
-
-     // Wait for host to be selected & connect.
-     var intervalID = setInterval(function(){
-     	console.log("Checking for host....");
-     	gameHost = getCookie('gameHost');
-     	gamePort = getCookie('gamePort');
-     	if(gameHost != null && gameHost != "") {
-     		console.log("Gamehost set... making connection." + gameHost);
-     		if(gamePort != null && gamePort != "") {
-     			var socket = io( "http://" + gameHost + ":" + gamePort);
-     			clearInterval(intervalID);
-     		}
-     	}
-     }, 500);
 });
