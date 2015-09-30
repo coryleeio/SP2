@@ -35,8 +35,7 @@ function handlePlayClick(event) {
        type: "GET",
        success: function(response) {
         var gameUrl = "http://" + response.host + ":" + response.port;
-        console.log("Connecting to game server at: " + gameUrl);
-        var socket = io( gameUrl );
+        connectToGameServer(gameUrl);
         $('.loginModal').modal('hide');
        },
        error: function(messages) {
