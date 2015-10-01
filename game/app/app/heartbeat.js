@@ -1,7 +1,7 @@
 var requestPromise = require('request-promise');
 var cronJob = require("cron").CronJob;
-var gameConfig = require('../config/game_server_config');
-var loginConfig = require('../config/login_server_config');
+var gameConfig = require('../config/gameServerConfig');
+var loginConfig = require('../config/loginServerConfig');
 var SHA256 = require("crypto-js/sha256");
 var digestedServerSecret = SHA256(gameConfig.shared_server_secret).toString();
 

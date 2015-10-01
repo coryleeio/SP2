@@ -7,6 +7,8 @@ var MongoStore = require('connect-mongo')(session);
 var configDB = require('./config/database');
 var cookieParser = require('cookie-parser')
 var auth      = require('./app/auth');
+
+
 var mandatory = require('./_common/serverside/force-env')([
 	'GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET','GOOGLE_CALLBACK_URL','SESSION_KEY','SERVER_REGISTRATION_HOST', 'SERVER_REGISTRATION_PORT','SHARED_SERVER_SECRET','HOST','PORT'
 ]);
@@ -33,5 +35,5 @@ app.use(passport.session());
 app.use(cookieParser());
 
 require('./app/heartbeat')();
-var routes = require('./config/routes')(app, io);
+var routes = require('./app/game')(app, io);
 server.listen(3000);

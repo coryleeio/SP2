@@ -30,6 +30,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 
 
 app.use(express.static(__dirname + '/app/public'));
+app.use('/common', express.static(__dirname + '/_common/serverclient'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
 app.use(bodyParser.json()); 
