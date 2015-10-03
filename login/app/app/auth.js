@@ -1,7 +1,7 @@
 var AES = require("crypto-js/aes");
 var SHA256 = require("crypto-js/sha256");
 var digestedServerSecret = SHA256(process.env.SHARED_SERVER_SECRET);
-var Server = require('../_common/serverside/models/server.js');
+var Server = require('../_sharedServerSide/models/server.js');
 module.exports = {
     isLoggedIn: function(req, res, next) {
         // if user is authenticated in the session, carry on 

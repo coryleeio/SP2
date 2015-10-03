@@ -9,7 +9,7 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var configDB = require('./config/database');
-var mandatory = require('./_common/serverside/force-env')([
+var mandatory = require('./_sharedServerSide/force-env')([
 	'SHARED_SERVER_SECRET','SESSION_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'
 ]);
 
@@ -30,7 +30,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 
 
 app.use(express.static(__dirname + '/app/public'));
-app.use('/common', express.static(__dirname + '/_common/serverclient'));
+app.use("/css", express.static(__dirname + '/app/css'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
 app.use(bodyParser.json()); 
@@ -43,7 +43,7 @@ app.use(session({
 	secret: process.env.SESSION_KEY,
 	store: new MongoStore({mongooseConnection: mongoose.connection})
 })); 
-require('./_common/serverside/config/passport')(passport); 
+require('./_sharedServerSide/config/passport')(passport); 
 app.use(passport.initialize());
 app.use(passport.session()); 
 

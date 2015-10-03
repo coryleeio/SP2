@@ -1,9 +1,9 @@
 var serverConstants = require('../config/serverConstants');
-var gameLoop = require('./gameloop');
+var gameLoop = require('./_sharedClientSide/gameloop');
 
 // Code shared with client.
-var World     = require('../_common/serverclient/ecs/world').ECS.World;
-var gameConstants = require('../_common/serverclient/config/gameConstants').ECS.gameConstants;
+var World     = require('./_sharedClientSide/ecs/world');
+var gameConstants = require('./_sharedClientSide/config/gameConstants');
 
 function Room(id) {
 	this.players = [];

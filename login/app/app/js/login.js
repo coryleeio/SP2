@@ -1,8 +1,5 @@
 var scopes = ['https://www.googleapis.com/auth/plus.me','profile', 'email'];
-
-function handleClientLoad() {
-	window.setTimeout(checkAuth,1);
-}
+var network = require('./network');
 
 function checkAuth() {
 	gapi.auth.authorize({client_id: googleClientId, scope: scopes, immediate: true}, handleAuthResult);
@@ -10,8 +7,8 @@ function checkAuth() {
 
 // Idempotent auth handler.
 function handleAuthResult(authResult) {
-    var googleButton = $(".google-login");
-    var facebookButton = $(".facebook-login");
+  var googleButton = $(".google-login");
+  var facebookButton = $(".facebook-login");
 	var playButton = $(".main-login");
 	if (authResult && !authResult.error) {
       // authenticated
@@ -35,7 +32,7 @@ function handlePlayClick(event) {
        type: "GET",
        success: function(response) {
         var gameUrl = "http://" + response.host + ":" + response.port;
-        connectToGameServer(gameUrl);
+        network.connectToGameServer(gameUrl);
         $('.loginModal').modal('hide');
        },
        error: function(messages) {
@@ -69,13 +66,19 @@ function makeApiCall() {
 }
 
 
-$(document).ready(function () {
-    // Display modal when first arriving on page.
-    // Initialize tooltips
-     $('.loginModal').modal({
-         backdrop: 'static',
-         keyboard: false
-     })
-     $('.loginModal').modal('show');
-     $('[data-toggle="tooltip"]').tooltip(); 
-});
+var intervalID = setInterval(function(){
+  if(gapi != null) {
+    window.setTimeout(checkAuth,1);
+    clearInterval(intervalID);
+  }
+},500);
+
+
+// Display modal when first arriving on page.
+// Initialize tooltips
+ $('.loginModal').modal({
+     backdrop: 'static',
+     keyboard: false
+ })
+ $('.loginModal').modal('show');
+ $('[data-toggle="tooltip"]').tooltip(); 

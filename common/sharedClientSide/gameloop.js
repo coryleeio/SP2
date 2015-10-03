@@ -9,6 +9,11 @@ var getLoopId = (function() {
 	}
 })();
 
+// Dirty hack to make this work on both browser and server without checking if this function exists in the main loop.
+var setImmediateShiv = (typeof setImmediate == 'function') ? setImmediate : function(func) {
+	func();
+}
+
 module.exports.setGameLoop = function(update, tickLengthMs) {
 
 	var loopId = getLoopId();
@@ -49,14 +54,7 @@ module.exports.setGameLoop = function(update, tickLengthMs) {
 		if (Date.now() - previousTick < tickLengthMs - 16) {
 			setTimeout(gameLoop, 16);
 		} else {
-			if(setImmediate != undefined)
-			{
-				setImmediate(gameLoop);
-			}
-			else
-			{
-				gameLoop();
-			}
+			setImmediateShiv(gameLoop);
 		}
 	}
 

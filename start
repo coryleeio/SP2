@@ -16,18 +16,33 @@ docker rm game3  -f > /dev/null 2>/dev/null
 docker rm mongo  -f > /dev/null 2>/dev/null
 
 # Remove common code.
-rm -rf ./game/app/_common
-rm -rf ./login/app/_common
 
-mkdir ./game/app/_common
-mkdir ./login/app/_common
-cp -a ./common/. ./game/app/_common/
-cp -a ./common/. ./login/app/_common/
+# serverclient is shared between client and game servers
+# serverside is shared between login and game servers.
+
+rm -rf ./game/app/app/_sharedClientSide
+rm -rf ./login/app/app/js/_sharedClientSide
+rm -rf ./game/app/_sharedServerSide
+rm -rf ./login/app/_sharedServerSide
+rm -rf ./login/app/app/public
+
+mkdir ./game/app/app/_sharedClientSide  
+mkdir ./login/app/app/js/_sharedClientSide  
+mkdir ./game/app/_sharedServerSide  
+mkdir ./login/app/_sharedServerSide  
+mkdir ./login/app/app/public
+
+cp -a ./common/sharedClientSide/. ./game/app/app/_sharedClientSide 
+cp -a ./common/sharedClientSide/. ./login/app/app/js/_sharedClientSide 
+cp -a ./common/sharedServerSide/. ./game/app/_sharedServerSide
+cp -a ./common/sharedServerSide/. ./login/app/_sharedServerSide 
 
 # build the various images.
+set -e
 docker build -t mongo ./mongodb/
 docker build -t login ./login/
 docker build -t game ./game/
+set +e
 
 # Run containers.
 docker run --name mongo \

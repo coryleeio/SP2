@@ -1,2 +1,5 @@
-/game/app/_common/**
-/login/app/_common/**
+/game/app/app/_sharedClientSide
+/login/app/app/js/_sharedClientSide
+/game/app/_sharedServerSide
+/login/app/_sharedServerSide
+/login/app/app/public
