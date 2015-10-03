@@ -35,5 +35,5 @@ app.use(passport.session());
 app.use(cookieParser());
 
 require('./app/heartbeat')();
-var routes = require('./app/game')(app, io);
+var routes = require('./app/network')(app, io);
 server.listen(3000);

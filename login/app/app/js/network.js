@@ -1,7 +1,6 @@
-var canvas = require('./canvas').canvas;
-var engine = require('./canvas').engine;
-var scene = require('./canvas').scene;
-var gameLoop = require('./_sharedClientSide/gameloop');
+var canvas = require('./_sharedClientSide/canvas').canvas;
+var engine = require('./_sharedClientSide/canvas').engine;
+var scene = require('./_sharedClientSide/canvas').scene;
 var World     = require('./_sharedClientSide/ecs/world');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
 
@@ -9,18 +8,20 @@ var network = {
 	connectToGameServer: function(gameUrl) {
 		console.log("Connecting to game server at: " + gameUrl);
 		var socket = io( gameUrl );
-		socket.on('news', function (data) {
-			console.log(data);
+		socket.on('connection', function (data) {
+			console.log("connected");
+			var world = new World();
+			// var sphere = new BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
+			// sphere.position.y = 1;
+			// var ground = new BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
 		});
 
-		var world = new World();
-		gameLoop.setGameLoop(world.step, gameConstants.stepDelta);
+		socket.on('disconnect', function() {
+			console.log("disconnected");
+		});
 
 
-		world.createEntityFromTemplate('Ball');
-		// var sphere = new BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
-		// sphere.position.y = 1;
-		// var ground = new BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+
 	}
 };
 module.exports = network;

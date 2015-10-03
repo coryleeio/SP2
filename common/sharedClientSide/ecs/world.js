@@ -1,11 +1,14 @@
-var Ball = require('./templates/ball');
+var templates = require('./templates');
 
 function World() {
     console.log("World created.");
     this.templates = {};
 
-    // register templates here.
-    this.templates[Ball.templateName] = Ball;
+    for(var template in templates){
+        this.templates[template] = templates[template];
+    }
+   	this.createEntityFromTemplate('ball');
+
     return this;
 }
 
@@ -14,8 +17,8 @@ World.prototype.step = function(delta){
 } 
 
 World.prototype.createEntityFromTemplate = function(templateName) {
-    var Template = this.templates[templateName];
-    return new Template();
+    var entity = this.templates[templateName]();
+    return entity;
 }
 
 module.exports = World;
