@@ -12,12 +12,12 @@ function World() {
     return this;
 }
 
-// increment the simulation by deltaMS
+// Increment the simulation by delta MS
 World.prototype.step = function(delta){
 	console.log('step' + delta);
 } 
 
-// client side only, visual fidelity updates, 
+// Client side only, visual fidelity updates, 
 // things that do not effect the simulation
 // such as: interpolate positions toward desired positions
 // not run by server at all.
