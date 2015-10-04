@@ -1,5 +1,5 @@
 var serverConstants = require('../config/serverConstants');
-var gameLoop = require('./gameloop');
+var gameLoop = require('./serverGameLoop');
 
 // Code shared with client.
 var World     = require('./_sharedClientSide/ecs/world');
