@@ -13,7 +13,6 @@ function World() {
 }
 
 World.prototype.step = function(delta){
-
 } 
 
 World.prototype.createEntityFromTemplate = function(templateName) {
