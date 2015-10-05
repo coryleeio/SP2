@@ -1,4 +1,3 @@
-
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
 var previousTick = Date.now();
 var delta;

@@ -1,26 +1,19 @@
-function Entity() {
-	this.id = (+new Date()).toString(16) + 
-	(Math.random() * 100000000 | 0).toString(16) +
-	Entity.prototype._count;
 
-	Entity.prototype._count++;
+// The lifecycle of these should be managed via world, do not add components directly.
+
+
+function Entity(id) {
+	this.id = id;
 	this.components = {};
-
-
-    console.log("Entity created.");
     return this;
 }	
 
-Entity.prototype._count = 0;
-Entity.prototype.addComponent = function ( component ){
-	this.components[component.name] = component;
+Entity.prototype.addComponent = function ( component, componentName ){
+	this.components[componentName] = component;
 	return this;
 }
-Entity.prototype.removeComponent = function ( component ){
-	delete this.components[component.name];
-}
-Entity.prototype.print = function() {
-	console.log(JSON.stringify(this));
+Entity.prototype.removeComponent = function ( componentName ){
+	delete this.components[componentName];
 }
 
 module.exports = Entity;
