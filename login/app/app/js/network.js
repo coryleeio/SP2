@@ -21,7 +21,7 @@ var network = {
 		});
 
 		socket.on('snapshot', function(data) {
-			console.log('snapshot received: ' + JSON.stringify(data));
+			// console.log('snapshot received: ' + JSON.stringify(data));
 		});
 
 		socket.on('disconnect', function() {

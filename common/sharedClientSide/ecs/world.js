@@ -1,4 +1,5 @@
 var gameTemplates = require('./templates');
+var utilities = require('./utilities');
 var nextEntityId = 1;
 
 var World = function() {
@@ -6,21 +7,19 @@ var World = function() {
     // dont freak out if you dont see it when desyncing.
     // remember JSON stringify does not print functions also....
     
-    this.entities = {};
-    this.systemsByInterest = {};
-    this.entitiesByComponentType = {};
+    this.entitiesByCompoundKey = {};
+    this.stepSystemsByConstructor = {}; // systems that have a step method.
+    this.updateSystemsByConstructor = {}; // systems that have an update method.
+    this.registrationSystemsByCompoundKey = {};
 }
 
 // Increment the simulation by delta MS
 World.prototype.step = function(delta){
-	for(var interest in this.systemsByInterest) {
-        var systems = this.systemsByInterest[interest];
-        for(systemIndex in systems) {
-            var system = systems[systemIndex];
-            console.log("system: " + system);
-            if(typeof(system.step) === 'function'){
-                system.step(this.entitiesByComponentType[interest], delta);
-            }
+    for(var systemConstructor in this.stepSystemsByConstructor){
+        var system = this.stepSystemsByConstructor[systemConstructor];
+        var entities = this.entitiesByCompoundKey[system.compoundKey];
+        for(var entityIndex in entities) {
+            system.step(entities[entityIndex]);
         }
     }
 } 
@@ -30,9 +29,11 @@ World.prototype.step = function(delta){
 // such as: interpolate positions toward desired positions
 // not run by server at all.
 World.prototype.update = function(delta) {
-   for(var system in this.systemsByInterest) {
-        if(typeof(system.update) == 'function'){
-            system.update(this.entitiesByComponentType, delta);
+    for(var systemConstructor in this.updateSystemsByConstructor){
+        var system = this.updateSystemsByConstructor[systemConstructor];
+        var entities = this.entitiesByCompoundKey[system.compoundKey];
+        for(var entityIndex in entities) {
+            system.update(entities[entityIndex]);
         }
     }
 }
@@ -46,18 +47,49 @@ World.prototype.createEntityFromTemplate = function(templateName) {
 }
 
 World.prototype.registerEntity = function(entity) {
-    this.entities[entity.id] = entity;
-    for(var componentType in entity.components) {
-        this.entitiesByComponentType[componentType] = this.entitiesByComponentType[componentType] || [];
-        this.entitiesByComponentType[componentType].push(entity);
+    var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(entity.components));
+    console.log("Registering entity with compoundKey = " + JSON.stringify(compoundKeys));
+    for(var compoundKeyIndex in compoundKeys) {
+        var compoundKey = compoundKeys[compoundKeyIndex];
+        this.entitiesByCompoundKey[compoundKey] = this.entitiesByCompoundKey[compoundKey] || [];
+        this.entitiesByCompoundKey[compoundKey].push(entity);
+        var relevantRegistrationSystems = this.registrationSystemsByCompoundKey[compoundKey];
+        for(registrationSystemIndex in relevantRegistrationSystems) {
+            var registrationSystem = relevantRegistrationSystems[registrationSystemIndex];
+            registrationSystem.onRegister(entity);
+        }
     }
 }
 
 World.prototype.registerSystem = function(system) {
-    for(var index in system.interests) {
-        var interest = system.interests[index];
-        this.systemsByInterest[interest] = this.systemsByInterest[interest] || [];
-        this.systemsByInterest[interest].push(system);
+    if (system.componentTypes.length <1 ) {
+        throw 'Tried to register service ' + system.constructor + ' without any componentTypes'; 
+    }
+    console.log("registering service: " + system.constructor);
+
+    var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
+    system.compoundKey = compoundKey;
+
+    if(typeof(system.step) == "function") {
+        console.log("registered " + system.constructor + " as a step system.");
+        this.stepSystemsByConstructor[system.constructor] = this.stepSystemsByConstructor[system.constructor] || [];
+        this.stepSystemsByConstructor[system.constructor].push(system);
+    }
+    if(typeof(system.update) == "function") {
+        console.log("registered " + system.constructor + " as a update system.");
+        this.updateSystemsByConstructor[system.constructor] = this.updateSystemsByConstructor[system.constructor] || [];
+        this.updateSystemsByConstructor[system.constructor].push(system);
+    }
+
+    if(typeof(system.onRegister) == "function") {
+        console.log("registered " + system.constructor + " as a onRegister system.");
+        this.registrationSystemsByCompoundKey[compoundKey] = this.registrationSystemsByCompoundKey[compoundKey] || [];
+        this.registrationSystemsByCompoundKey[compoundKey].push(system);
+
+        var relevantEntities = this.entitiesByCompoundKey[compoundKey];
+        for(var entityIndex in relevantEntities) {
+            system.onRegister(relevantEntities[entityIndex]);
+        }
     }
 }
 

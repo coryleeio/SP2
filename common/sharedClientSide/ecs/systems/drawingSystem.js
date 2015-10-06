@@ -1,21 +1,17 @@
 var canvas = require('../../canvas');
-var interest = require('../components/drawable').name;
+var drawableName = require('../components/drawable').name;
 
 function DrawingSystem() {
 	this.hasDrawnById = {};
-	this.interests = [interest];
+	this.componentTypes = [drawableName];
 }
 
-DrawingSystem.prototype.step = function(entities, delta) {
-	for(var entityIndex in entities) {
-		var entity = entities[entityIndex];
-		if(this.hasDrawnById[entity.id] == null) {
-			this[entity.components.drawable.fn]();
-			this.hasDrawnById[entity.id] = entity;
-		}
-	}
+DrawingSystem.prototype.onRegister = function(entity) {
+	this[entity.components.drawable.fn](); // call the function on myself to draw the thing requested.
+	this.hasDrawnById[entity.id] = entity;
 }
 
+// demo
 DrawingSystem.prototype.sphere = function() {
 	console.log('drawing the sphere!!');
 }
