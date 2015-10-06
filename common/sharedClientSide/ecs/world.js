@@ -3,10 +3,7 @@ var utilities = require('./utilities');
 var nextEntityId = 1;
 
 var World = function() {
-    this.templates = gameTemplates; // This will not send over the wire.
-    // dont freak out if you dont see it when desyncing.
-    // remember JSON stringify does not print functions also....
-    
+    this.templates = gameTemplates; 
     this.entitiesByCompoundKey = {};
     this.stepSystemsByConstructor = {}; // systems that have a step method.
     this.updateSystemsByConstructor = {}; // systems that have an update method.
@@ -26,8 +23,8 @@ World.prototype.step = function(delta){
 
 // Client side only, visual fidelity updates, 
 // things that do not effect the simulation
-// such as: interpolate positions toward desired positions
-// not run by server at all.
+// such as: interpolate positions toward desired positions.
+// This is not run by the server at all.
 World.prototype.update = function(delta) {
     for(var systemConstructor in this.updateSystemsByConstructor){
         var system = this.updateSystemsByConstructor[systemConstructor];
