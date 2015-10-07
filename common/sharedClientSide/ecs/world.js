@@ -4,10 +4,14 @@ var nextEntityId = 1;
 
 var World = function() {
     this.templates = gameTemplates; 
+    this.entities = [];
+    this.entitiesById = {};
     this.entitiesByCompoundKey = {};
+
     this.stepSystemsByConstructor = {}; // systems that have a step method.
     this.updateSystemsByConstructor = {}; // systems that have an update method.
     this.registrationSystemsByCompoundKey = {};
+    this.deregistrationSystemsByCompoundKey = {};
 }
 
 // Increment the simulation by delta MS
@@ -56,6 +60,24 @@ World.prototype.registerEntity = function(entity) {
             registrationSystem.onRegister(entity);
         }
     }
+    this.entitiesById[entity.id] = entity;
+    this.entities.push(entity);
+}
+
+World.prototype.deregisterEntity = function(entity) {
+    console.log("Deregistering entity");
+    var localEntity = this.entitiesById[entity.id];
+    this.entitiesById[entity.id] = null;
+    this.entities.splice(this.entities.indexOf(localEntity), 1);
+
+    // This could be improved by caching possibleCompoundKeys per entityId.
+    var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(entity.components));
+    
+    // This could be improved by caching the indexes of the entity, per compoundKey. 
+    compoundKeys.forEach(function(key) {
+        var entitiesByCompoundKey = this.entitiesByCompoundKey[key];
+        entitiesByCompoundKey.splice(entitiesByCompoundKey.indexOf(localEntity), 1);
+    });
 }
 
 World.prototype.registerSystem = function(system) {
@@ -88,10 +110,32 @@ World.prototype.registerSystem = function(system) {
             system.onRegister(relevantEntities[entityIndex]);
         }
     }
+    if(typeof(system.onDeregister) == "function") {
+        console.log("Deregistered " + system.constructor + " as a onDeregister system.");
+        this.deregistrationSystemsByCompoundKey[compoundKey] = this.deregistrationSystemsByCompoundKey[compoundKey] || [];
+        this.deregistrationSystemsByCompoundKey[compoundKey].push(system);
+        var relevantEntities = this.entitiesByCompoundKey[compoundKey];
+        for(var entityIndex in relevantEntities) {
+            system.onDeregister(relevantEntities[entityIndex]);
+        }
+    }
+
 }
 
-World.prototype.deserializeState = function(input) {
-    console.log("deserializeState not implemented");
+World.prototype.getSnapshot = function() {
+    return this.entities;
+}
+
+World.prototype.receiveSnapshot = function(world, input) {
+    input.forEach(function(entity){
+        if(world.entitiesById[entity.id] == null) {
+            world.registerEntity(entity);
+        }
+
+        if(entity.markedForDeletion == true) {
+            world.deregisterEntity(entity);
+        }
+    });
 }
 
 module.exports = World;

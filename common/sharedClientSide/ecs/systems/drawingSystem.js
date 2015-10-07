@@ -2,18 +2,24 @@ var canvas = require('../../canvas');
 var drawableName = require('../components/drawable').name;
 
 function DrawingSystem() {
-	this.hasDrawnById = {};
+	this.meshByEntityId = {};
 	this.componentTypes = [drawableName];
 }
 
 DrawingSystem.prototype.onRegister = function(entity) {
-	this[entity.components.drawable.fn](); // call the function on myself to draw the thing requested.
-	this.hasDrawnById[entity.id] = entity;
+	var mesh = this[entity.components.drawable.fn](); // call the function on myself to draw the thing requested.
+	this.meshByEntityId[entity.id] = mesh;
+}
+
+DrawingSystem.prototype.onDeregister = function(entity) {
+	this.meshByEntityId[entity.id].dispose();
+	this.meshByEntityId[entity.id] = null;
 }
 
 // demo
 DrawingSystem.prototype.sphere = function() {
-	console.log('drawing the sphere!!');
+	var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+	return sphere;
 }
 
 

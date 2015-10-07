@@ -16,7 +16,7 @@ function Room(io, id) {
 
 	loopId = gameLoop.setGameLoop.bind(this.world, this.world.step, gameConstants.stepDelta);
 	gameLoop.setGameLoop(function(){
-	   createdRoom.io.sockets.in(createdRoom.id).emit('snapshot', createdRoom.world.entities);
+	   createdRoom.io.sockets.in(createdRoom.id).emit('snapshot', createdRoom.world.getSnapshot());
 	 }, gameConstants.snapshotDelta);
 }
 
