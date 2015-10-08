@@ -3,3 +3,4 @@
 /game/app/_sharedServerSide
 /login/app/_sharedServerSide
 /login/app/app/public
+/common/sharedClientSide/matter.js

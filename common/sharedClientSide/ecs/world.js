@@ -20,7 +20,7 @@ World.prototype.step = function(delta){
         var system = this.stepSystemsByConstructor[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
         for(var entityIndex in entities) {
-            system.step(entities[entityIndex]);
+            system.step(entities[entityIndex], delta);
         }
     }
 } 
@@ -34,7 +34,7 @@ World.prototype.update = function(delta) {
         var system = this.updateSystemsByConstructor[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
         for(var entityIndex in entities) {
-            system.update(entities[entityIndex]);
+            system.update(entities[entityIndex], delta);
         }
     }
 }
@@ -82,26 +82,25 @@ World.prototype.deregisterEntity = function(entity) {
 
 World.prototype.registerSystem = function(system) {
     if (system.componentTypes.length <1 ) {
-        throw 'Tried to register service ' + system.constructor + ' without any componentTypes'; 
+        throw 'Tried to register service ' + system.constructor.name + ' without any componentTypes'; 
     }
-    console.log("registering service: " + system.constructor);
+
 
     var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
     system.compoundKey = compoundKey;
+    console.log("registering " + system.constructor.name + ' service with compound Key: ' + compoundKey);
 
     if(typeof(system.step) == "function") {
-        console.log("registered " + system.constructor + " as a step system.");
-        this.stepSystemsByConstructor[system.constructor] = this.stepSystemsByConstructor[system.constructor] || [];
-        this.stepSystemsByConstructor[system.constructor].push(system);
+        console.log("registered " + system.constructor.name + " as a step system.");
+        this.stepSystemsByConstructor[system.constructor.name] = system;
     }
     if(typeof(system.update) == "function") {
-        console.log("registered " + system.constructor + " as a update system.");
-        this.updateSystemsByConstructor[system.constructor] = this.updateSystemsByConstructor[system.constructor] || [];
-        this.updateSystemsByConstructor[system.constructor].push(system);
+        console.log("registered " + system.constructor.name + " as a update system.");
+        this.updateSystemsByConstructor[system.constructor.name] = system;
     }
 
     if(typeof(system.onRegister) == "function") {
-        console.log("registered " + system.constructor + " as a onRegister system.");
+        console.log("registered " + system.constructor.name + " as a onRegister system.");
         this.registrationSystemsByCompoundKey[compoundKey] = this.registrationSystemsByCompoundKey[compoundKey] || [];
         this.registrationSystemsByCompoundKey[compoundKey].push(system);
 
@@ -111,7 +110,7 @@ World.prototype.registerSystem = function(system) {
         }
     }
     if(typeof(system.onDeregister) == "function") {
-        console.log("Deregistered " + system.constructor + " as a onDeregister system.");
+        console.log("registered " + system.constructor.name + " as a onDeregister system.");
         this.deregistrationSystemsByCompoundKey[compoundKey] = this.deregistrationSystemsByCompoundKey[compoundKey] || [];
         this.deregistrationSystemsByCompoundKey[compoundKey].push(system);
         var relevantEntities = this.entitiesByCompoundKey[compoundKey];

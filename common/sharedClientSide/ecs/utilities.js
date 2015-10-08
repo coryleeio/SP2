@@ -1,14 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
 module.exports = {
 	// takes an array of componentTypes and 
 	// returns them

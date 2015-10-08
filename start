@@ -36,6 +36,7 @@ cp -a ./common/sharedClientSide/. ./game/app/app/_sharedClientSide
 cp -a ./common/sharedClientSide/. ./login/app/app/js/_sharedClientSide 
 cp -a ./common/sharedServerSide/. ./game/app/_sharedServerSide
 cp -a ./common/sharedServerSide/. ./login/app/_sharedServerSide 
+cp -a ./common/sharedClientSide/. ./login/app/app/public/
 
 # build the various images.
 set -e
