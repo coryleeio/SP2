@@ -8,16 +8,16 @@ var World = function() {
     this.entitiesById = {};
     this.entitiesByCompoundKey = {};
 
-    this.stepSystemsByConstructor = {}; // systems that have a step method.
-    this.updateSystemsByConstructor = {}; // systems that have an update method.
+    this.stepSystemsByConstructorName = {}; // systems that have a step method.
+    this.updateSystemsByConstructorName = {}; // systems that have an update method.
     this.registrationSystemsByCompoundKey = {};
     this.deregistrationSystemsByCompoundKey = {};
 }
 
 // Increment the simulation by delta MS
 World.prototype.step = function(delta){
-    for(var systemConstructor in this.stepSystemsByConstructor){
-        var system = this.stepSystemsByConstructor[systemConstructor];
+    for(var systemConstructor in this.stepSystemsByConstructorName){
+        var system = this.stepSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
         for(var entityIndex in entities) {
             system.step(entities[entityIndex], delta);
@@ -30,8 +30,8 @@ World.prototype.step = function(delta){
 // such as: interpolate positions toward desired positions.
 // This is not run by the server at all.
 World.prototype.update = function(delta) {
-    for(var systemConstructor in this.updateSystemsByConstructor){
-        var system = this.updateSystemsByConstructor[systemConstructor];
+    for(var systemConstructor in this.updateSystemsByConstructorName){
+        var system = this.updateSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
         for(var entityIndex in entities) {
             system.update(entities[entityIndex], delta);
@@ -88,19 +88,18 @@ World.prototype.registerSystem = function(system) {
 
     var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
     system.compoundKey = compoundKey;
-    console.log("registering " + system.constructor.name + ' service with compound Key: ' + compoundKey);
 
     if(typeof(system.step) == "function") {
-        console.log("registered " + system.constructor.name + " as a step system.");
-        this.stepSystemsByConstructor[system.constructor.name] = system;
+        console.log("Registered " + system.constructor.name + " to handle steps for entities with the following compound key: " + compoundKey);
+        this.stepSystemsByConstructorName[system.constructor.name] = system;
     }
     if(typeof(system.update) == "function") {
-        console.log("registered " + system.constructor.name + " as a update system.");
-        this.updateSystemsByConstructor[system.constructor.name] = system;
+        console.log("Registered " + system.constructor.name + " to handle updates for entities with the following compound key: " + compoundKey);
+        this.updateSystemsByConstructorName[system.constructor.name] = system;
     }
 
     if(typeof(system.onRegister) == "function") {
-        console.log("registered " + system.constructor.name + " as a onRegister system.");
+        console.log("Registered " + system.constructor.name + " to handle registration for entities with the following compound key: " + compoundKey);
         this.registrationSystemsByCompoundKey[compoundKey] = this.registrationSystemsByCompoundKey[compoundKey] || [];
         this.registrationSystemsByCompoundKey[compoundKey].push(system);
 
@@ -110,7 +109,7 @@ World.prototype.registerSystem = function(system) {
         }
     }
     if(typeof(system.onDeregister) == "function") {
-        console.log("registered " + system.constructor.name + " as a onDeregister system.");
+        console.log("Registered " + system.constructor.name + " to handle deregistration for entities with the following compound key: " + compoundKey);
         this.deregistrationSystemsByCompoundKey[compoundKey] = this.deregistrationSystemsByCompoundKey[compoundKey] || [];
         this.deregistrationSystemsByCompoundKey[compoundKey].push(system);
         var relevantEntities = this.entitiesByCompoundKey[compoundKey];
