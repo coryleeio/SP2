@@ -1,8 +1,7 @@
 
 // The lifecycle of these should be managed via world, do not add components directly.
 
-function Entity(id) {
-	this.id = id;
+function Entity() {
 	this.components = {};
     return this;
 }	

@@ -1,27 +1,40 @@
-var physicsBody = require('../components/physicsBody').name;
+var rigidBodyName = require('../components/rigidBody').name;
+var transformName = require('../components/transform').name;
+
 function PhysicsSystem(Matter) {
 	this.Matter = Matter;
-	this.componentTypes = [physicsBody];
+	this.componentTypes = [rigidBodyName, transformName];
 	this.engine = Matter.Engine.create();
-
-	// this.boxA = Matter.Bodies.rectangle(400, 200, 80, 80);
-	// this.boxB = Matter.Bodies.rectangle(450, 50, 80, 80);
-
-	// this.ground = Matter.Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-	// this.Matter.World.add(this.engine.world, [this.boxA, this.boxB, this.ground]);
-	// this.Matter.Body.setVelocity(this.boxA, {x: 10, y: 15});
+	this.engine.world.gravity.y = 0;
+	this.engine.world.gravity.x = 0;
+	this.matterBodiesByEntityId = {};
 	// this.Matter.Body.setVelocity(this.boxB, {x: 0, y: 0});
-
 }
 
-PhysicsSystem.prototype.step = function(entity, delta) {
+PhysicsSystem.prototype.onRegister = function(entity) {
+	if(entity.components.rigidBody.type == "circle") {
+		var transform = entity.components.transform;
+		var parameters = entity.components.rigidBody.parameters;
+		var matterBody = this.Matter.Bodies.circle(transform.position.x, transform.position.y, parameters.radius, {frictionAir: 0});
+		this.matterBodiesByEntityId[entity.id] = matterBody;
+		this.Matter.World.add(this.engine.world, [matterBody]);
+		transform.position = matterBody.position; // by reference
+	}
+}
+
+PhysicsSystem.prototype.onDeregister = function(entity) {
+	this.matterBodiesByEntityId[entity.id] = null;
+}
+
+PhysicsSystem.prototype.step = function(entities, delta) {
 	this.Matter.Events.trigger(this.engine, 'tick');
 	this.Matter.Engine.update(this.engine, delta);
 	this.Matter.Events.trigger(this.engine, 'afterTick');
-	
-	// console.log('boxA', this.boxA.position);
-	// console.log('boxB', this.boxB.position);
+	entities.forEach(function(entity){
+		var rigidBody = entity.components.rigidBody;
+		var transform = entity.components.transform;
+		var matterBody = this.matterBodiesByEntityId[entity.id];
+	}, this);
 }
-
 
 module.exports = PhysicsSystem;

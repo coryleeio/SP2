@@ -5,6 +5,8 @@ var PhysicsSystem = require('./_sharedClientSide/ecs/systems/physicsSystem');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
 var Matter = require('./_sharedClientSide/matter.js');
 
+var Ball = require('./_sharedClientSide/ecs/templates/ball');
+
 function Room(io, id) {
 	var createdRoom = this;
 	this.id = id;
@@ -16,9 +18,15 @@ function Room(io, id) {
 	this.world = new World();
 	var physicsSystem = new PhysicsSystem(Matter);
 	this.world.registerSystem(physicsSystem);
-	this.world.createEntityFromTemplate('ball');
-	var fn = this.world.step.bind(this.world);
 
+	this.world.registerEntity(new Ball({x: -2, y: 0}, 2));
+	this.world.registerEntity(new Ball({x: 0, y: 0}, 1));
+	this.world.registerEntity(new Ball({x: 2, y: 0}, 2));
+	this.world.registerEntity(new Ball({x: 4, y: -2}, 2));
+	this.world.registerEntity(new Ball({x: -4, y: -2}, 2));
+	this.world.registerEntity(new Ball({x: 2, y: -4}, 2));
+
+	var fn = this.world.step.bind(this.world);
 	loopId = gameLoop.setGameLoop(fn, gameConstants.stepDelta);
 	gameLoop.setGameLoop(function(){
 	   createdRoom.io.sockets.in(createdRoom.id).emit('snapshot', createdRoom.world.getSnapshot());

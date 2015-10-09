@@ -1,9 +1,7 @@
-var gameTemplates = require('./templates');
 var utilities = require('./utilities');
 var nextEntityId = 1;
 
 var World = function() {
-    this.templates = gameTemplates; 
     this.entities = [];
     this.entitiesById = {};
     this.entitiesByCompoundKey = {};
@@ -19,8 +17,8 @@ World.prototype.step = function(delta){
     for(var systemConstructor in this.stepSystemsByConstructorName){
         var system = this.stepSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
-        for(var entityIndex in entities) {
-            system.step(entities[entityIndex], delta);
+        if(entities) {
+            system.step(entities, delta);
         }
     }
 } 
@@ -33,21 +31,18 @@ World.prototype.update = function(delta) {
     for(var systemConstructor in this.updateSystemsByConstructorName){
         var system = this.updateSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
-        for(var entityIndex in entities) {
-            system.update(entities[entityIndex], delta);
+        if(entities) {
+            system.update(entities, delta);
         }
     }
 }
 
-World.prototype.createEntityFromTemplate = function(templateName) {
-    var entity = this.templates[templateName](nextEntityId);
-    nextEntityId++;
-    this.registerEntity(entity);
-    console.log("create entity from template: " + templateName);
-    return entity;
-}
-
 World.prototype.registerEntity = function(entity) {
+    if(entity.id == null) {
+        entity.id = nextEntityId;
+        nextEntityId++;
+    }
+
     var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(entity.components));
     console.log("Registering entity with compoundKey = " + JSON.stringify(compoundKeys));
     for(var compoundKeyIndex in compoundKeys) {
@@ -85,7 +80,6 @@ World.prototype.registerSystem = function(system) {
         throw 'Tried to register service ' + system.constructor.name + ' without any componentTypes'; 
     }
 
-
     var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
     system.compoundKey = compoundKey;
 
@@ -93,6 +87,7 @@ World.prototype.registerSystem = function(system) {
         console.log("Registered " + system.constructor.name + " to handle steps for entities with the following compound key: " + compoundKey);
         this.stepSystemsByConstructorName[system.constructor.name] = system;
     }
+    
     if(typeof(system.update) == "function") {
         console.log("Registered " + system.constructor.name + " to handle updates for entities with the following compound key: " + compoundKey);
         this.updateSystemsByConstructorName[system.constructor.name] = system;
@@ -108,6 +103,7 @@ World.prototype.registerSystem = function(system) {
             system.onRegister(relevantEntities[entityIndex]);
         }
     }
+
     if(typeof(system.onDeregister) == "function") {
         console.log("Registered " + system.constructor.name + " to handle deregistration for entities with the following compound key: " + compoundKey);
         this.deregistrationSystemsByCompoundKey[compoundKey] = this.deregistrationSystemsByCompoundKey[compoundKey] || [];
