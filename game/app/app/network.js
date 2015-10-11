@@ -33,6 +33,7 @@ module.exports = function(app, io) {
 
     client.on('disconnect', function(){
       roomsByClientId[client.id].leave(client);
+      roomsByClientId[client.id] = null;
       if(client.request.user != null && client.request.user.google != null)
       {
         console.log('User: ' + client.request.user.google.email + ' has disconnected.');

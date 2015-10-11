@@ -14,6 +14,7 @@ var World = function() {
 
 // Increment the simulation by delta MS
 World.prototype.step = function(delta){
+    console.log("step");
     for(var systemConstructor in this.stepSystemsByConstructorName){
         var system = this.stepSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
@@ -28,6 +29,7 @@ World.prototype.step = function(delta){
 // such as: interpolate positions toward desired positions.
 // This is not run by the server at all.
 World.prototype.update = function(delta) {
+    console.log("update");
     for(var systemConstructor in this.updateSystemsByConstructorName){
         var system = this.updateSystemsByConstructorName[systemConstructor];
         var entities = this.entitiesByCompoundKey[system.compoundKey];
