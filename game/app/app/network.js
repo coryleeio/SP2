@@ -28,9 +28,6 @@ module.exports = function(app, io) {
       console.log("No room was available to join!");
     }
 
-
-    
-
     client.on('disconnect', function(){
       roomsByClientId[client.id].leave(client);
       roomsByClientId[client.id] = null;

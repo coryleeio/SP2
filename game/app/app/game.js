@@ -16,7 +16,7 @@ function Game(io, room) {
 	var physicsSystem = new PhysicsSystem(Matter);
 	this.world.registerSystem(physicsSystem);
 
-
+	
 	// this.world.registerEntity(new Ball({x: -2, y: 0}, 2));
 	// this.world.registerEntity(new Ball({x: 0, y: 0}, 1));
 	// this.world.registerEntity(new Ball({x: 2, y: 0}, 2));
@@ -31,6 +31,13 @@ Game.prototype.start = function() {
 	this.snapshotLoopId = gameLoop.setGameLoop(function(){
 	   this.io.sockets.in(this.id).emit('snapshot', this.world.getSnapshot());
 	 }.bind(this), gameConstants.snapshotDelta);
+	this.spawnLoopId = gameLoop.setGameLoop(this.spawnPlayersIfNeeded, gameConstants.playerSpawnRate);
+}
+
+Game.prototype.spawnPlayersIfNeeded = function() {
+	this.room.players.forEach(client) {
+
+	}
 }
 
 Game.prototype.stop = function() {

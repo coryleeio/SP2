@@ -9,12 +9,16 @@ var rigidBodyName = require('../components/rigidBody').name;
 var Transform = require('../components/transform').constructor;
 var transformName = require('../components/transform').name;
 
+var PlayerController = require('../components/PlayerController').constructor;
+var playerControllerName = require('../components/PlayerController').name;
+
 function Ball(position, diameter) {
 	var entity = new Entity();
 	var d = diameter || 5;
 	entity.addComponent(new Transform(position), transformName);
 	entity.addComponent(new Drawable('sphere', {diameter: d}), drawableName);
 	entity.addComponent(new RigidBody('circle', {radius: d/2}), rigidBodyName);
+	entity.addComponent(new PlayerController(), playerControllerName);
 	return entity;
 }
 module.exports = Ball;
