@@ -1,5 +1,6 @@
-module.exports.constructor = Transform;
-module.exports.name = 'transform';
-function Transform(position){
+function Transform(position, rotation){
 	this.position = position;
+	this.rotation = rotation;
 }
+
+module.exports = Transform;

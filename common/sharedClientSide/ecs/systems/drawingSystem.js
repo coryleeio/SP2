@@ -1,10 +1,10 @@
 var canvas = require('../../canvas');
-var drawableName = require('../components/drawable').name;
-var transformName = require('../components/transform').name;
+var Drawable = require('../components/drawable');
+var Transform = require('../components/transform');
 
 function DrawingSystem() {
 	this.meshByEntityId = {};
-	this.componentTypes = [drawableName, transformName];
+	this.componentTypes = [Drawable.name, Transform.name];
 }
 
 DrawingSystem.prototype.update = function(entities, delta) {
@@ -16,6 +16,10 @@ DrawingSystem.prototype.update = function(entities, delta) {
 		// TODO: iterpolate mesh to position of transform at appropriate delay.
 		mesh.position.x = transform.position.x;
 		mesh.position.y = transform.position.y;
+		TODO set mesh rotation to that of the rigidbody.
+
+
+
 	}, this);
 }
 
