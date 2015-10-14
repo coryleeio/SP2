@@ -1,6 +1,8 @@
 var RigidBody = require('../components/rigidBody';
 var PlayerInput = require('../components/playerInput');
 var Ship = require('../components/ship');
+var Ships = require('../../config/ships');
+
 
 function ShipSystem(physicsSystem) {
 	this.componentTypes = [Ship.name, RigidBody.name, PlayerInput.name];
@@ -13,13 +15,11 @@ ShipSystem.prototype.step = function(entities, delta) {
 	entities.forEach(function(entity){
 		var input = entity.components.playerInput;
 		var ship = entity.components.ship;
-
-		shipStats = ???   get my shipStats ???
+		var shipStats = ships[ship.type];
 
 		if(input) {
 			if(input.left) {
 				transform.angle = matterBody.angle + shipStats.negativeTurnSpeed;
-
 			}
 			else if(input.right) {
 				transform.angle = matterBody.angle + shipStats.turnSpeed;

@@ -1,6 +1,5 @@
-function Drawable(fn, arguements){
-	this.fn = fn;
-	this.arguements = arguements;
+function Drawable(spriteName){
+	this.spriteName = spriteName;
 }
 
 module.exports = Drawable;

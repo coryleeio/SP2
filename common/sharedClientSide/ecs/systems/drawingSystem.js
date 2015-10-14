@@ -1,42 +1,39 @@
 var canvas = require('../../canvas');
+var scene = canvas.scene;
 var Drawable = require('../components/drawable');
 var Transform = require('../components/transform');
+var vespa = new BABYLON.SpriteManager("VespaMgr", "assets/vespa.png", 20, 512, scene);
 
 function DrawingSystem() {
-	this.meshByEntityId = {};
+	this.spriteManagerBySpriteName = {
+		vespa: vespa
+	};
+	this.spriteByEntityId = {};
 	this.componentTypes = [Drawable.name, Transform.name];
 }
 
 DrawingSystem.prototype.update = function(entities, delta) {
 	entities.forEach(function(entity){
-		var mesh = this.meshByEntityId[entity.id];
+		var sprite = this.spriteByEntityId[entity.id];
 		var rigidBody = entity.components.rigidBody;
 		var transform = entity.components.transform;
 
 		// TODO: iterpolate mesh to position of transform at appropriate delay.
-		mesh.position.x = transform.position.x;
-		mesh.position.y = transform.position.y;
-		TODO set mesh rotation to that of the rigidbody.
-
-
-
+		sprite.position.x = transform.position.x;
+		sprite.position.y = transform.position.y;
+		sprite.angle = transform.angle;
 	}, this);
 }
 
 DrawingSystem.prototype.onRegister = function(entity) {
-	var mesh = this[entity.components.drawable.fn](entity.components.drawable.arguements); // call the function on myself to draw the thing requested.
-	this.meshByEntityId[entity.id] = mesh;
+	var spriteManager = this.spriteManagerBySpriteName[entity.components.drawable.spriteName]; 
+	var sprite = new BABYLON.Sprite(entity.id + ' - sprite', spriteManager);
+	this.spriteByEntityId[entity.id] = sprite;
 }
 
 DrawingSystem.prototype.onDeregister = function(entity) {
-	this.meshByEntityId[entity.id].dispose();
-	this.meshByEntityId[entity.id] = null;
-}
-
-// demo
-DrawingSystem.prototype.sphere = function(args) {
-	var sphere = BABYLON.Mesh.CreateSphere("sphere", 16, args.diameter || 2, scene);
-	return sphere;
+	this.spriteByEntityId[entity.id].dispose();
+	this.spriteByEntityId[entity.id] = null;
 }
 
 module.exports = DrawingSystem;

@@ -31,6 +31,7 @@ mongoose.connection.db.dropCollection('servers', function(err, result) {
 
 app.use(express.static(__dirname + '/app/public'));
 app.use("/css", express.static(__dirname + '/app/css'));
+app.use("/assets", express.static(__dirname + '/app/assets'));
 app.use(morgan('dev'));
 app.use(cookieParser()); 
 app.use(bodyParser.json()); 

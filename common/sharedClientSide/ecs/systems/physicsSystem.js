@@ -35,19 +35,10 @@ PhysicsSystem.prototype.step = function(entities, delta) {
 		var rigidBody = entity.components.rigidBody;
 		var transform = entity.components.transform;
 		var matterBody = this.matterBodiesByEntityId[entity.id];
-
-
 		// Write state to the physics simulation.  Other systems should probably run before this one, since 
 		// assigning to it affects the simulation.
-
 		Body.setVelocity(matterBody, rigidBody.velocity);
-
-
-		XXXXX
-		// this is angle relative to current rotation, 
-		// but the angle on transform is relative to X-axis.
-		// need to fix this before rotating.
-		Body.rotate(matterBody, transform.angle.RELATIVE_TO_X_AXIS); 
+		Body.rotate(matterBody, transform.angle - matterBody.angle); 
 	}, this);
 }
 
