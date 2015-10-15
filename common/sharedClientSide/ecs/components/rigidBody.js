@@ -1,6 +1,6 @@
-function RigidBody(type, parameters, velocity){
+function RigidBody(rigidBodyType, parameters, velocity){
 	this.parameters = parameters;
-	this.type = type;
+	this.rigidBodyType = rigidBodyType;
 	this.velocity = velocity || {x:0, y:0};
 }
 

@@ -1,8 +1,4 @@
-function Ship(type) {
-	this.type = type;
+function Ship(shipType) {
+	this.shipType = shipType;
 }
-
-
-
-
 module.exports = Ship;

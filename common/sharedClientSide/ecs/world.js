@@ -81,20 +81,21 @@ World.prototype.registerSystem = function(system) {
     }
 
     var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
+    var systemKey = utilities.lowerCaseFirstLetter(system.constructor.name);
     system.compoundKey = compoundKey;
 
     if(typeof(system.step) == "function") {
-        console.log("Registered " + system.constructor.name + " to handle steps for entities with the following compound key: " + compoundKey);
-        this.stepSystemsByConstructorName[system.constructor.name] = system;
+        console.log("Registered " + systemKey + " to handle steps for entities with the following compound key: " + compoundKey);
+        this.stepSystemsByConstructorName[systemKey] = system;
     }
     
     if(typeof(system.update) == "function") {
-        console.log("Registered " + system.constructor.name + " to handle updates for entities with the following compound key: " + compoundKey);
-        this.updateSystemsByConstructorName[system.constructor.name] = system;
+        console.log("Registered " + systemKey + " to handle updates for entities with the following compound key: " + compoundKey);
+        this.updateSystemsByConstructorName[systemKey] = system;
     }
 
     if(typeof(system.onRegister) == "function") {
-        console.log("Registered " + system.constructor.name + " to handle registration for entities with the following compound key: " + compoundKey);
+        console.log("Registered " + systemKey + " to handle registration for entities with the following compound key: " + compoundKey);
         this.registrationSystemsByCompoundKey[compoundKey] = this.registrationSystemsByCompoundKey[compoundKey] || [];
         this.registrationSystemsByCompoundKey[compoundKey].push(system);
 
@@ -105,7 +106,7 @@ World.prototype.registerSystem = function(system) {
     }
 
     if(typeof(system.onDeregister) == "function") {
-        console.log("Registered " + system.constructor.name + " to handle deregistration for entities with the following compound key: " + compoundKey);
+        console.log("Registered " + systemKey + " to handle deregistration for entities with the following compound key: " + compoundKey);
         this.deregistrationSystemsByCompoundKey[compoundKey] = this.deregistrationSystemsByCompoundKey[compoundKey] || [];
         this.deregistrationSystemsByCompoundKey[compoundKey].push(system);
         var relevantEntities = this.entitiesByCompoundKey[compoundKey];

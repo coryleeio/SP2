@@ -1,12 +1,11 @@
 var RigidBody = require('../components/rigidBody';
 var PlayerInput = require('../components/playerInput');
 var Ship = require('../components/ship');
-var Ships = require('../../config/ships');
-
+var ShipTypeFactory = require('../factories/shipTypeFactory');
 
 function ShipSystem(physicsSystem) {
 	this.componentTypes = [Ship.name, RigidBody.name, PlayerInput.name];
-	this.matterBodiesById = physicsSystem.matterBodiesById; // by reference from physics system.
+	this.matterBodiesById = physicsSystem.matterBodiesById; // By reference from physics system.
 	this.Matter = physicsSystem.Matter;
 }
 
@@ -15,7 +14,7 @@ ShipSystem.prototype.step = function(entities, delta) {
 	entities.forEach(function(entity){
 		var input = entity.components.playerInput;
 		var ship = entity.components.ship;
-		var shipStats = ships[ship.type];
+		var shipStats = ShipTypeFactory[ship.shipType];
 
 		if(input) {
 			if(input.left) {
@@ -25,7 +24,8 @@ ShipSystem.prototype.step = function(entities, delta) {
 				transform.angle = matterBody.angle + shipStats.turnSpeed;
 			}
 			if(input.up) {
-				// set this in physics engine instead... should not modify physics engine state.
+
+				// Set this in physics engine instead... should not modify physics engine state.
 				// write to rigidbody, and let physicsSystem handle the engine.
 				// this will allow additional systems to affect the velocity before assigning it also.
 				var stepAddition = Vector.rotate({x: shipStats.acceleration, y: 0}, matterBody.angle);

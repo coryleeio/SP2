@@ -1,5 +1,6 @@
-var RigidBody = require('../components/rigidBody';
+var RigidBody = require('../components/rigidBody');
 var Transform = require('../components/transform');
+var RigidBodyTypeFactory = require('../factories/rigidBodyTypeFactory');
 
 function PhysicsSystem(Matter) {
 	this.Matter = Matter;
@@ -12,14 +13,11 @@ function PhysicsSystem(Matter) {
 }
 
 PhysicsSystem.prototype.onRegister = function(entity) {
-	if(entity.components.rigidBody.type == "circle") {
-		var transform = entity.components.transform;
-		var parameters = entity.components.rigidBody.parameters;
-		var matterBody = this.Matter.Bodies.circle(transform.position.x, transform.position.y, parameters.radius, {frictionAir: 0});
-		this.matterBodiesByEntityId[entity.id] = matterBody;
-		this.Matter.World.add(this.engine.world, [matterBody]);
-		transform.position = matterBody.position; // by reference
-	}
+	var matterBody = RigidBodyTypeFactory[entity.components.rigidBody.rigidBodyType](entity, this.Matter);
+	var transform = entity.components.transform;
+	this.matterBodiesByEntityId[entity.id] = matterBody;
+	this.Matter.World.add(this.engine.world, [matterBody]);
+	transform.position = matterBody.position; // By reference
 }
 
 PhysicsSystem.prototype.onDeregister = function(entity) {
