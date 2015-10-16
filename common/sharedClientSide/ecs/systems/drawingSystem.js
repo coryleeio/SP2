@@ -18,8 +18,7 @@ DrawingSystem.prototype.update = function(entities, delta) {
 		// TODO: Iterpolate mesh to position of transform at appropriate delay.
 		sprite.position.x = transform.position.x;
 		sprite.position.y = transform.position.y;
-		console.log('setting angle here was causing sprites to not draw. fix this.');
-		// sprite.angle = transform.angle;
+		sprite.angle = transform.angle;
 	}, this);
 }
 
