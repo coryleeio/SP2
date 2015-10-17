@@ -14,14 +14,12 @@ function Game(io, room) {
 	this.world = new World();
 	var physicsSystem = new PhysicsSystem(Matter);
 	this.world.registerSystem(physicsSystem);
+}
 
-	
-	this.world.registerEntity(new Vespa({x: 0, y: 0}));
-	// this.world.registerEntity(new Ball({x: 0, y: 0}, 1));
-	// this.world.registerEntity(new Ball({x: 2, y: 0}, 2));
-	// this.world.registerEntity(new Ball({x: 4, y: -2}, 2));
-	// this.world.registerEntity(new Ball({x: -4, y: -2}, 2));
-	// this.world.registerEntity(new Ball({x: 2, y: -4}, 2));
+Game.prototype.spawnPlayer = function(client){
+	var ship = new Vespa({x: 0, y: 0});
+	this.world.registerEntity(ship);
+	this.io.to(client.id).emit('takeControl', ship.id);
 }
 
 Game.prototype.start = function() {

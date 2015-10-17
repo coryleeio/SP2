@@ -23,6 +23,10 @@ var network = {
 			});
 		});
 
+		socket.on('takeControl', function(entityId) {
+			console.log('taking control of entity: ', entityId);
+		});
+
 		socket.on('snapshot', function(data) {
 			world.receiveSnapshot(world, data);
 		});

@@ -15,6 +15,7 @@ Room.prototype.join = function(client) {
 	console.log("client.id: " + client.id + " joining room with id: " + this.id);
 	this.players.push(client);
 	client.join(this.id); // socket io join room
+	this.game.spawnPlayer(client);
 	if(this.players.length == 1) {
 		this.game.start();
 	}
