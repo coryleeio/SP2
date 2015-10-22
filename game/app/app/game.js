@@ -5,6 +5,7 @@ var PhysicsSystem = require('./_sharedClientSide/ecs/systems/physicsSystem');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
 var Matter = require('./_sharedClientSide/matter.js');
 var Vespa = require('./_sharedClientSide/ecs/templates/vespa');
+var clientIdToShip = {};
 
 // Serverside game logic
 
@@ -20,6 +21,7 @@ Game.prototype.spawnPlayer = function(client){
 	var ship = new Vespa({x: 0, y: 0});
 	this.world.registerEntity(ship);
 	this.io.to(client.id).emit('takeControl', ship.id);
+	clientIdToShip[client.id] = ship;
 }
 
 Game.prototype.start = function() {

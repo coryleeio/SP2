@@ -24,6 +24,7 @@ Room.prototype.join = function(client) {
 Room.prototype.leave = function(client) {
 	console.log("client.id: " + client.id + " leaving room with id: " + this.id);
 	var index = this.players.indexOf(client);
+	this.game.despawnPlayer(client);
 	this.players.splice(index, 1);
 	if(this.players.length == 0) {
 		this.game.stop();

@@ -3,7 +3,7 @@ var previousTick = Date.now();
 var delta;
 var now;
 
-module.exports = function(socket, entityIdToControl, world) {
+module.exports = function(world) {
 	now = Date.now();
 	delta = (now - previousTick) / 1000;
 	if (previousTick + gameConstants.stepDelta <= now) {
