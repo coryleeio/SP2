@@ -24,7 +24,6 @@ DrawingSystem.prototype.update = function(entities, delta) {
 
 DrawingSystem.prototype.onRegister = function(entity) {
 	var sprite = DrawableTypeFactory[entity.components.drawable.drawableType](entity);
-	console.log('drawing: ' + JSON.stringify(entity));
 	this.spriteByEntityId[entity.id] = sprite;
 }
 

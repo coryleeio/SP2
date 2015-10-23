@@ -15,4 +15,10 @@ Entity.prototype.removeComponent = function ( componentName ){
 	delete this.components[utilities.lowerCaseFirstLetter(componentName)];
 }
 
+Entity.prototype.removeAllComponents = function() {
+	for(var componentId in this.components) {
+		delete this.components[componentId];
+	}
+}
+
 module.exports = Entity;

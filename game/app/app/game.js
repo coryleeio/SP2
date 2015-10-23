@@ -24,11 +24,20 @@ Game.prototype.spawnPlayer = function(client){
 	clientIdToShip[client.id] = ship;
 }
 
+Game.prototype.despawnPlayer = function(client){
+	var ship = clientIdToShip[client.id];
+	if (ship != null) {
+		this.world.deregisterEntityById(ship.id);
+		clientIdToShip[client.id] = null;
+	}
+}
+
 Game.prototype.start = function() {
 	var fn = this.world.step.bind(this.world);
 	this.gameLoopId = gameLoop.setGameLoop(fn, gameConstants.stepDelta);
 	this.snapshotLoopId = gameLoop.setGameLoop(function(){
 	   this.io.sockets.in(this.room.id).emit('snapshot', this.world.getSnapshot());
+	   this.world.afterSnapshot();
 	 }.bind(this), gameConstants.snapshotDelta);
 }
 

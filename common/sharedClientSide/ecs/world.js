@@ -2,7 +2,9 @@ var utilities = require('./utilities');
 var nextEntityId = 1;
 
 var World = function() {
-    this.entities = [];
+    this.snapshot = {};
+    this.snapshot.entities = [];
+    this.snapshot.deletedThisSnapshot = [];
     this.entitiesById = {};
     this.entitiesByCompoundKey = {};
 
@@ -40,11 +42,11 @@ World.prototype.update = function(delta) {
 World.prototype.registerEntity = function(entity) {
     if(entity.id == null) {
         entity.id = nextEntityId;
+        console.log('entityID: ' + entity.id  + " assigned.");
         nextEntityId++;
     }
 
     var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(entity.components));
-    console.log("Registering entity with compoundKey = " + JSON.stringify(compoundKeys));
     for(var compoundKeyIndex in compoundKeys) {
         var compoundKey = compoundKeys[compoundKeyIndex];
         this.entitiesByCompoundKey[compoundKey] = this.entitiesByCompoundKey[compoundKey] || [];
@@ -55,28 +57,37 @@ World.prototype.registerEntity = function(entity) {
             registrationSystem.onRegister(entity);
         }
     }
+    console.log('registered entity: ' + JSON.stringify(entity));
     this.entitiesById[entity.id] = entity;
-    this.entities.push(entity);
+    this.snapshot.entities.push(entity);
 }
 
-World.prototype.deregisterEntity = function(entity) {
-    console.log("Deregistering entity");
-    var localEntity = this.entitiesById[entity.id];
-    this.entitiesById[entity.id] = null;
-    this.entities.splice(this.entities.indexOf(localEntity), 1);
+World.prototype.deregisterEntityById = function(entityId) {
+    console.log('deregistering', entityId);
+    var localEntity = this.entitiesById[entityId];
+    console.log('localEntity:', JSON.stringify(localEntity));
+    this.entitiesById[entityId] = null;
+
+    this.snapshot.entities.splice(this.snapshot.entities.indexOf(localEntity), 1);
 
     // This could be improved by caching possibleCompoundKeys per entityId.
-    var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(entity.components));
-    
+    var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(localEntity.components));
     // This could be improved by caching the indexes of the entity, per compoundKey. 
     compoundKeys.forEach(function(key) {
+        var relevantDeregistrationSystems = this.deregistrationSystemsByCompoundKey[key];
+        for(registrationSystemIndex in relevantDeregistrationSystems) {
+            var registrationSystem = relevantDeregistrationSystems[registrationSystemIndex];
+            registrationSystem.onDeregister(localEntity);
+        }
         var entitiesByCompoundKey = this.entitiesByCompoundKey[key];
-        entitiesByCompoundKey.splice(entitiesByCompoundKey.indexOf(localEntity), 1);
-    });
+        this.entitiesByCompoundKey[key].splice(this.entitiesByCompoundKey[key].indexOf(localEntity), 1);
+    }.bind(this));
+    this.snapshot.deletedThisSnapshot.push(localEntity.id); // If i'm the server, mark the entity for the clients to delete.
+    delete localEntity;
 }
 
 World.prototype.registerSystem = function(system) {
-    if (system.componentTypes.length <1 ) {
+    if (system.componentTypes.length < 1 ) {
         throw 'Tried to register service ' + system.constructor.name + ' without any componentTypes'; 
     }
 
@@ -118,19 +129,24 @@ World.prototype.registerSystem = function(system) {
 }
 
 World.prototype.getSnapshot = function() {
-    return this.entities;
+    return this.snapshot;
+}
+
+World.prototype.afterSnapshot = function() {
+    this.snapshot.deletedThisSnapshot = [];
 }
 
 World.prototype.receiveSnapshot = function(world, input) {
-    input.forEach(function(entity){
+    input.entities.forEach(function(entity){
         if(world.entitiesById[entity.id] == null) {
             world.registerEntity(entity);
         }
-
-        if(entity.markedForDeletion == true) {
-            world.deregisterEntity(entity);
-        }
     });
+
+    input.deletedThisSnapshot.forEach(function(entityId){
+        world.deregisterEntityById(entityId);
+    });
+    this.snapshot.deletedThisSnapshot = []; // things that deleted this frame.  If im not the server I dont need this.
 }
 
 module.exports = World;
