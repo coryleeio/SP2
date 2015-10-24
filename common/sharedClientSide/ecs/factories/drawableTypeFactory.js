@@ -1,6 +1,5 @@
 if(typeof BABYLON != 'undefined') {
 	var scene = require('../../canvas').scene;
-	console.log('le sprite manager creation.', scene);
 	var vespaSpriteManager = new BABYLON.SpriteManager("VespaMgr", "assets/vespa.png", 20, 512, scene);
 }
 

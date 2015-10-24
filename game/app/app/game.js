@@ -37,7 +37,6 @@ Game.prototype.start = function() {
 	this.gameLoopId = gameLoop.setGameLoop(fn, gameConstants.stepDelta);
 	this.snapshotLoopId = gameLoop.setGameLoop(function(){
 	   this.io.sockets.in(this.room.id).emit('snapshot', this.world.getSnapshot());
-	   this.world.afterSnapshot();
 	 }.bind(this), gameConstants.snapshotDelta);
 }
 

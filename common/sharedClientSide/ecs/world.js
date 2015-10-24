@@ -2,9 +2,6 @@ var utilities = require('./utilities');
 var nextEntityId = 1;
 
 var World = function() {
-    this.snapshot = {};
-    this.snapshot.entities = [];
-    this.snapshot.deletedThisSnapshot = [];
     this.entitiesById = {};
     this.entitiesByCompoundKey = {};
 
@@ -59,16 +56,11 @@ World.prototype.registerEntity = function(entity) {
     }
     console.log('registered entity: ' + JSON.stringify(entity));
     this.entitiesById[entity.id] = entity;
-    this.snapshot.entities.push(entity);
 }
 
 World.prototype.deregisterEntityById = function(entityId) {
     console.log('deregistering', entityId);
     var localEntity = this.entitiesById[entityId];
-    console.log('localEntity:', JSON.stringify(localEntity));
-    this.entitiesById[entityId] = null;
-
-    this.snapshot.entities.splice(this.snapshot.entities.indexOf(localEntity), 1);
 
     // This could be improved by caching possibleCompoundKeys per entityId.
     var compoundKeys = utilities.calculatePossibleCompoundKeys(Object.keys(localEntity.components));
@@ -82,8 +74,7 @@ World.prototype.deregisterEntityById = function(entityId) {
         var entitiesByCompoundKey = this.entitiesByCompoundKey[key];
         this.entitiesByCompoundKey[key].splice(this.entitiesByCompoundKey[key].indexOf(localEntity), 1);
     }.bind(this));
-    this.snapshot.deletedThisSnapshot.push(localEntity.id); // If i'm the server, mark the entity for the clients to delete.
-    delete localEntity;
+    delete this.entitiesById[entityId]; // dont replace this with localEntity
 }
 
 World.prototype.registerSystem = function(system) {
@@ -129,24 +120,30 @@ World.prototype.registerSystem = function(system) {
 }
 
 World.prototype.getSnapshot = function() {
-    return this.snapshot;
+    return this.entitiesById;
 }
 
-World.prototype.afterSnapshot = function() {
-    this.snapshot.deletedThisSnapshot = [];
-}
-
-World.prototype.receiveSnapshot = function(world, input) {
-    input.entities.forEach(function(entity){
-        if(world.entitiesById[entity.id] == null) {
-            world.registerEntity(entity);
+World.prototype.receiveSnapshot = function(world, inputEntitiesById) {
+    for(var id in inputEntitiesById) {
+        var foreignEntity = inputEntitiesById[id];
+        var localEntity = world.entitiesById[id];
+        if(localEntity == null) {
+            console.log(JSON.stringify(foreignEntity));
+            console.log(JSON.stringify(inputEntitiesById));
+            world.registerEntity(foreignEntity);
         }
-    });
+        else{
+            // Handle update here
+        }
+    }
 
-    input.deletedThisSnapshot.forEach(function(entityId){
-        world.deregisterEntityById(entityId);
-    });
-    this.snapshot.deletedThisSnapshot = []; // things that deleted this frame.  If im not the server I dont need this.
+    for(var id in world.entitiesById) {
+        var foreignEntity = inputEntitiesById[id];
+        if(foreignEntity == null) {
+            // Deleted.. handle here.
+            world.deregisterEntityById(id);
+        }
+    }
 }
 
 module.exports = World;
