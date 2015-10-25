@@ -128,19 +128,23 @@ World.prototype.receiveSnapshot = function(world, inputEntitiesById) {
         var foreignEntity = inputEntitiesById[id];
         var localEntity = world.entitiesById[id];
         if(localEntity == null) {
+            // Handle creation here
             console.log(JSON.stringify(foreignEntity));
             console.log(JSON.stringify(inputEntitiesById));
             world.registerEntity(foreignEntity);
         }
         else{
             // Handle update here
+            for(var componentKey in foreignEntity.components){
+                localEntity.components[componentKey] = foreignEntity.components[componentKey];
+            }
         }
     }
 
     for(var id in world.entitiesById) {
         var foreignEntity = inputEntitiesById[id];
         if(foreignEntity == null) {
-            // Deleted.. handle here.
+            // Handle delete here
             world.deregisterEntityById(id);
         }
     }
