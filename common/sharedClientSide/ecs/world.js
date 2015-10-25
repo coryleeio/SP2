@@ -129,8 +129,6 @@ World.prototype.receiveSnapshot = function(world, inputEntitiesById) {
         var localEntity = world.entitiesById[id];
         if(localEntity == null) {
             // Handle creation here
-            console.log(JSON.stringify(foreignEntity));
-            console.log(JSON.stringify(inputEntitiesById));
             world.registerEntity(foreignEntity);
         }
         else{
