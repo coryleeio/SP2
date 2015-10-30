@@ -25,9 +25,7 @@ PhysicsSystem.prototype.onDeregister = function(entity) {
 }
 
 PhysicsSystem.prototype.step = function(entities, delta) {
-	this.Matter.Events.trigger(this.engine, 'tick');
-	this.Matter.Engine.update(this.engine, delta);
-	this.Matter.Events.trigger(this.engine, 'afterTick');
+
 	var Body = this.Matter.Body;
 	entities.forEach(function(entity){
 		var rigidBody = entity.components.rigidBody;
@@ -38,6 +36,9 @@ PhysicsSystem.prototype.step = function(entities, delta) {
 		Body.setVelocity(matterBody, rigidBody.velocity);
 		Body.rotate(matterBody, transform.angle - matterBody.angle); 
 	}, this);
+	this.Matter.Events.trigger(this.engine, 'tick');
+	this.Matter.Engine.update(this.engine, delta);
+	this.Matter.Events.trigger(this.engine, 'afterTick');
 }
 
 module.exports = PhysicsSystem;

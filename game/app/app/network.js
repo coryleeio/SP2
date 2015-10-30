@@ -28,6 +28,11 @@ module.exports = function(app, io) {
       console.log("No room was available to join!");
     }
 
+    client.on('playerInput', function(playerInput){
+      console.log('server received playerInput!');
+      console.log(JSON.stringify(playerInput));
+    });
+
     client.on('disconnect', function(){
       roomsByClientId[client.id].leave(client);
       roomsByClientId[client.id] = null;
