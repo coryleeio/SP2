@@ -7,36 +7,48 @@ function PlayerInputSystem(world) {
 	this.componentTypes = [PlayerInput.name];
 	this.playerInputObject = null;
 
-	window.addEventListener("keydown", function(event){
-		console.log(this.constructor.name);
-		if(this.playerControlledEntityId != null) {
-			var entity = world.entitiesById[this.playerControlledEntityId];
-			var playerInput = entity.components.playerInput;
-			if(event.keyCode === 87)
-			{
-				console.log('pushing up');
-				playerInput.up = true;
-			}
-			if(event.keyCode === 83)
-			{
-				console.log('pushing down');
-				playerInput.down = true;
-			}
-
-			if(event.keyCode === 65)
-			{
-				console.log('pushing left');
-				playerInput.left = true;
-			}
-
-			if(event.keyCode === 68)
-			{
-				console.log('pushing right');
-				playerInput.right = true;
-			}
-			this.playerInputObject = playerInput;
+	var markChanged = function(playerInput, previousValue, newValue) {
+		if(playerInput != null && previousValue != newValue) {
+			playerInput.isChanged = true;
 		}
-	}.bind(this));
+	}
+
+	var keyListener = function(event) {
+			if(this.playerControlledEntityId != null) {
+				var entity = world.entitiesById[this.playerControlledEntityId];
+				var playerInput = entity.components.playerInput;
+				var isDown = event.type == 'keydown';
+				if(event.keyCode === 87)
+				{
+					markChanged(playerInput, playerInput.up, isDown);
+					playerInput.up = isDown;
+
+				}
+				else if(event.keyCode === 83)
+				{
+					markChanged(playerInput, playerInput.down, isDown);
+					playerInput.down = isDown;
+				}
+
+				else if(event.keyCode === 68)
+				{
+					markChanged(playerInput, playerInput.left, isDown);
+					playerInput.left = isDown;
+				}
+
+				else if(event.keyCode === 65)
+				{
+					markChanged(playerInput, playerInput.right, isDown);
+					playerInput.right = isDown;
+				}
+
+				this.playerInputObject = playerInput;
+			}
+	}.bind(this);
+
+
+	window.addEventListener("keydown", keyListener);
+	window.addEventListener("keyup", keyListener);
 }
 
 PlayerInputSystem.prototype.setPlayerControlledEntity = function(entityId) {

@@ -1,11 +1,12 @@
-var RigidBody = require('../components/rigidBody';
+var RigidBody = require('../components/rigidBody');
 var PlayerInput = require('../components/playerInput');
 var Ship = require('../components/ship');
+var Tranform = require('../components/transform');
 var ShipTypeFactory = require('../factories/shipTypeFactory');
 
 function ShipSystem(physicsSystem) {
-	this.componentTypes = [Ship.name, RigidBody.name, PlayerInput.name];
-	this.matterBodiesById = physicsSystem.matterBodiesById; // By reference from physics system.
+	this.componentTypes = [Ship.name, RigidBody.name, PlayerInput.name, Tranform.name];
+	this.matterBodiesByEntityId = physicsSystem.matterBodiesByEntityId; // By reference from physics system.
 	this.Matter = physicsSystem.Matter;
 }
 
@@ -15,8 +16,11 @@ ShipSystem.prototype.step = function(entities, delta) {
 		var input = entity.components.playerInput;
 		var ship = entity.components.ship;
 		var shipStats = ShipTypeFactory[ship.shipType];
-
+		var matterBody = this.matterBodiesByEntityId[entity.id];
+		var rigidBody = entity.components.rigidBody;
+		var transform = entity.components.transform;
 		if(input) {
+
 			if(input.left) {
 				transform.angle = matterBody.angle + shipStats.negativeTurnSpeed;
 			}
@@ -29,14 +33,14 @@ ShipSystem.prototype.step = function(entities, delta) {
 				// write to rigidbody, and let physicsSystem handle the engine.
 				// this will allow additional systems to affect the velocity before assigning it also.
 				var stepAddition = Vector.rotate({x: shipStats.acceleration, y: 0}, matterBody.angle);
-				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition));
+				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition);
 			}
 			else if(input.down) {
 				var stepAddition = Vector.rotate({x: shipStats.negativeAcceleration, y: 0}, matterBody.angle);
-				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition));
+				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition);
 			}
 		}
-	}, this));
+	}, this);
 }
 
 

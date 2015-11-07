@@ -1,8 +1,8 @@
 var ships = {
 	vespaType: 'vespa',
 	vespa: {
-		maxSpeed: 10,
-		acceleration: 0.5,
+		maxSpeed: 2,
+		acceleration: 0.25,
 		turnSpeed: 0.2
 	}
 }

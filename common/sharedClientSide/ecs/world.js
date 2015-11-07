@@ -134,7 +134,9 @@ World.prototype.receiveSnapshot = function(world, inputEntitiesById) {
         else{
             // Handle update here
             for(var componentKey in foreignEntity.components){
-                localEntity.components[componentKey] = foreignEntity.components[componentKey];
+                if(componentKey != "playerInput"){
+                    localEntity.components[componentKey] = foreignEntity.components[componentKey];
+                }
             }
         }
     }

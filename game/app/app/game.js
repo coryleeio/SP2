@@ -2,6 +2,7 @@
 var gameLoop = require('./serverGameLoop');
 var World     = require('./_sharedClientSide/ecs/world');
 var PhysicsSystem = require('./_sharedClientSide/ecs/systems/physicsSystem');
+var ShipSystem = require('./_sharedClientSide/ecs/systems/shipSystem');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
 var Matter = require('./_sharedClientSide/matter.js');
 var Vespa = require('./_sharedClientSide/ecs/templates/vespa');
@@ -13,7 +14,10 @@ function Game(io, room) {
 	this.room = room;
 	this.io = io;
 	this.world = new World();
+
 	var physicsSystem = new PhysicsSystem(Matter);
+	var shipSystem = new ShipSystem(physicsSystem);
+	this.world.registerSystem(shipSystem);
 	this.world.registerSystem(physicsSystem);
 }
 
@@ -29,6 +33,27 @@ Game.prototype.despawnPlayer = function(client){
 	if (ship != null) {
 		this.world.deregisterEntityById(ship.id);
 		clientIdToShip[client.id] = null;
+	}
+}
+
+Game.prototype.updateClientInput = function(clientId, clientPlayerInput) {
+	var ship = clientIdToShip[clientId];
+	var safeInputUpdate = function(clientPlayerInput, serverPlayerInput) {
+			/*
+				The client is dark and full of terrors
+			*/
+			if(serverPlayerInput && clientPlayerInput) {
+				var inputs = ["up", "down", "left", "right"];
+				inputs.forEach(function(key){
+					// Only true or false, on accepted keys.
+					serverPlayerInput[key] = clientPlayerInput[key] ? true : false; 
+				});
+				console.log("Input after update: ", serverPlayerInput);
+		}
+	}
+
+	if(ship) {
+		safeInputUpdate(clientPlayerInput, ship.components.playerInput);
 	}
 }
 
