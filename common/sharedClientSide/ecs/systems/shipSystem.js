@@ -10,6 +10,15 @@ function ShipSystem(physicsSystem) {
 	this.Matter = physicsSystem.Matter;
 }
 
+function ceiling(Matter, vector, maximumMagnitude) {
+	var Vector = Matter.Vector;
+	var currentMagnitude = Vector.magnitude(vector);
+	if(currentMagnitude > maximumMagnitude) {
+		return Vector.mult(Vector.normalise(vector), maximumMagnitude);
+	}
+	return vector;
+}
+
 ShipSystem.prototype.step = function(entities, delta) {
 	var Vector = this.Matter.Vector;
 	entities.forEach(function(entity){
@@ -33,11 +42,11 @@ ShipSystem.prototype.step = function(entities, delta) {
 				// write to rigidbody, and let physicsSystem handle the engine.
 				// this will allow additional systems to affect the velocity before assigning it also.
 				var stepAddition = Vector.rotate({x: shipStats.acceleration, y: 0}, matterBody.angle);
-				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition);
+				rigidBody.velocity = ceiling(this.Matter, Vector.add(rigidBody.velocity, stepAddition), shipStats.maxSpeed);
 			}
 			else if(input.down) {
 				var stepAddition = Vector.rotate({x: shipStats.negativeAcceleration, y: 0}, matterBody.angle);
-				rigidBody.velocity = Vector.add(rigidBody.velocity, stepAddition);
+				rigidBody.velocity = ceiling(this.Matter, Vector.add(rigidBody.velocity, stepAddition), shipStats.maxSpeed);
 			}
 		}
 	}, this);
