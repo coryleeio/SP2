@@ -34,7 +34,6 @@ PhysicsSystem.prototype.step = function(entities, delta) {
 		// Write state to the physics simulation.  Other systems should probably run before this one, since 
 		// assigning to it affects the simulation.
 		Body.setVelocity(matterBody, rigidBody.velocity);
-		Body.rotate(matterBody, transform.angle - matterBody.angle); 
 	}, this);
 	this.Matter.Events.trigger(this.engine, 'tick');
 	this.Matter.Engine.update(this.engine, delta);

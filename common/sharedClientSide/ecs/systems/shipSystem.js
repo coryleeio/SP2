@@ -30,22 +30,22 @@ ShipSystem.prototype.step = function(entities, delta) {
 		var transform = entity.components.transform;
 		if(input) {
 
-			if(input.left) {
-				transform.angle = matterBody.angle + shipStats.negativeTurnSpeed;
+			if(input.right) {
+				transform.angle = transform.angle + shipStats.negativeTurnSpeed;
 			}
-			else if(input.right) {
-				transform.angle = matterBody.angle + shipStats.turnSpeed;
+			else if(input.left) {
+				transform.angle = transform.angle + shipStats.turnSpeed;
 			}
 			if(input.up) {
 
 				// Set this in physics engine instead... should not modify physics engine state.
 				// write to rigidbody, and let physicsSystem handle the engine.
 				// this will allow additional systems to affect the velocity before assigning it also.
-				var stepAddition = Vector.rotate({x: shipStats.acceleration, y: 0}, matterBody.angle);
+				var stepAddition = Vector.rotate({x: shipStats.acceleration, y: 0}, transform.angle);
 				rigidBody.velocity = ceiling(this.Matter, Vector.add(rigidBody.velocity, stepAddition), shipStats.maxSpeed);
 			}
 			else if(input.down) {
-				var stepAddition = Vector.rotate({x: shipStats.negativeAcceleration, y: 0}, matterBody.angle);
+				var stepAddition = Vector.rotate({x: shipStats.negativeAcceleration, y: 0}, transform.angle);
 				rigidBody.velocity = ceiling(this.Matter, Vector.add(rigidBody.velocity, stepAddition), shipStats.maxSpeed);
 			}
 		}

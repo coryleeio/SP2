@@ -5,9 +5,4 @@ var gameConstants = {
 };
 
 
-// derived properties to avoid recalculations
-
-// approx framerate / nu
-gameConstants.numberOfTimesPerFrameToInterpolate = 4;
-
 module.exports = gameConstants;

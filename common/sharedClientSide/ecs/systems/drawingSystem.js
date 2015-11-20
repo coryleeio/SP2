@@ -19,10 +19,7 @@ DrawingSystem.prototype.update = function(entities, delta) {
 		var desiredPositionX = transform.position.x;
 		var desiredPositionY = transform.position.y;
 
-		// TODO: Iterpolate mesh to position of transform at appropriate delay.
-		//sprite.position.x = (sprite.position.x + (transform.position.x - sprite.position.x)) / gameConstants.numberOfTimesPerFrameToInterpolate ;
-		//sprite.position.y = (sprite.position.y + (transform.position.y - sprite.position.y)) / gameConstants.numberOfTimesPerFrameToInterpolate ;
-		var newPosition = BABYLON.Vector3.Lerp(sprite.position, transform.position, delta)
+		var newPosition = BABYLON.Vector3.Lerp(sprite.position, transform.position, delta);
 		sprite.position.x = newPosition.x;
 		sprite.position.y = newPosition.y;
 		sprite.angle = sprite.angle + (transform.angle - sprite.angle) * delta;

@@ -7,11 +7,6 @@ function PlayerInputSystem(world) {
 	this.componentTypes = [PlayerInput.name];
 	this.playerInputObject = null;
 
-	var markChanged = function(playerInput, previousValue, newValue) {
-		if(playerInput != null && previousValue != newValue) {
-			playerInput.isChanged = true;
-		}
-	}
 
 	var keyListener = function(event) {
 			if(this.playerControlledEntityId != null) {
@@ -20,25 +15,20 @@ function PlayerInputSystem(world) {
 				var isDown = event.type == 'keydown';
 				if(event.keyCode === 87)
 				{
-					markChanged(playerInput, playerInput.up, isDown);
 					playerInput.up = isDown;
-
 				}
 				else if(event.keyCode === 83)
 				{
-					markChanged(playerInput, playerInput.down, isDown);
 					playerInput.down = isDown;
-				}
-
-				else if(event.keyCode === 68)
-				{
-					markChanged(playerInput, playerInput.left, isDown);
-					playerInput.left = isDown;
 				}
 
 				else if(event.keyCode === 65)
 				{
-					markChanged(playerInput, playerInput.right, isDown);
+					playerInput.left = isDown;
+				}
+
+				else if(event.keyCode === 68)
+				{
 					playerInput.right = isDown;
 				}
 
