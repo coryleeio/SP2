@@ -1,7 +1,10 @@
 #!/bin/bash
 
+source ./creds
+
 # This is mostly for easy dev setup
 # bc no docker-compose in windows. x.x
+# (this is fixed now, will switch to compose soon.)
 
 # Stop and remove any old containers
 docker stop login  > /dev/null 2>/dev/null
