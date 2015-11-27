@@ -1,8 +1,6 @@
 ## What is this?
-a top down sprite based multiplayer spaceship game with authoratative physics written exclusively in Javascript
-
-This project is meant to explore how one might build a top down sprite based multiplayer spaceship game with authoratative physics.
-Uses browserify to allow you to share code between the server and the client without compiling from other languages.
+A top down sprite based multiplayer spaceship game with authoratative physics written exclusively in Javascript
+Gameplay is implemented using an entity component system that is shared between the server and client. 
 
 The start script runs docker commands which create 3 game servers and a login server backed by a mongo database. 
 Users can play as a guest, or login with their google account.
