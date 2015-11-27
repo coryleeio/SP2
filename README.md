@@ -19,6 +19,11 @@ Open the docker quickstart terminal, navigate to the project directory and type:
 
 `./start`
 
+### Troubleshooting
+If your servers dont work properly, check the configuration in the start script, you may need to replace the docker host
+ip address if yours differs from mine.
+
+
 Then navigate to your game on port 80 of your docker host
 in brower: 
 
