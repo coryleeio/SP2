@@ -1,11 +1,9 @@
 Install docker-toolbox
+
 `https://www.docker.com/docker-toolbox`
 
 Open the docker quickstart terminal and type:
-
 `./start`
-
-To start the application:
 
 Then navigate to your game on port 80 of your docker host
 in brower: `http://192.168.99.100`    (yours may vary)
