@@ -24,6 +24,8 @@ in brower:
 
 `http://192.168.99.100`    (yours may vary)
 
+Upon pressing play your game client will be directed to the server with the least load.
+
 You can open multiple tabs in your browser to connect with multiple clients at the same time.
 
 Start script is idempotent and you can run it more than once to rebuild after making changes.
