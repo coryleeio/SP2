@@ -2,7 +2,20 @@ var scopes = ['https://www.googleapis.com/auth/plus.me','profile', 'email'];
 var network = require('./network');
 
 function checkAuth() {
-	gapi.auth.authorize({client_id: googleClientId, scope: scopes, immediate: true}, handleAuthResult);
+  console.log('check auth')
+  if(googleClientId != null && googleClientId != "") {
+    gapi.auth.authorize({client_id: googleClientId, scope: scopes, immediate: true}, handleAuthResult);
+  }
+  else {
+    console.log('Google auth not started because key was not provided.')
+    var playButton = $(".main-login");
+    playButton.click(handlePlayClick);
+    var googleButton = $(".google-login");
+    var facebookButton = $(".facebook-login");
+    googleButton.css('display', 'none');
+    facebookButton.css('display', 'none');
+  }
+
 }
 
 // Idempotent auth handler.
@@ -26,7 +39,7 @@ function handleAuthResult(authResult) {
 }
 
 function handlePlayClick(event) {
-
+  console.log('handling play click.')
     $.ajax({
        url: "/server",
        type: "GET",

@@ -30,37 +30,41 @@ module.exports = function(passport) {
         });
     });
 
-    passport.use(new GoogleStrategy({
-        clientID        : googleConfig.clientID,
-        clientSecret    : googleConfig.clientSecret,
-        callbackURL     : googleConfig.callbackURL
-    },
-    function(token, refreshToken, profile, done) {
-        process.nextTick(function() {
-            User.findOne({ 'google.id' : profile.id }, function(err, user) {
-                if(err){
-                    return done(err);
-                }
-
-                if(user) {
-                    // if found, log in.
-                    return done(null, user);
-                } else {
-                    var newUser = new User();
-                    newUser.google.id = profile.id;
-                    newUser.google.token = token;
-                    newUser.name = profile.displayName;
-                    newUser.google.email = profile.emails[0].value;
-                }
-
-                // save the user
-                newUser.save(function(err) {
+    if(googleConfig.clientID != null && googleConfig.clientID != '') {
+        console.log('xx', googleConfig.clientID);
+        passport.use(new GoogleStrategy({
+            clientID        : googleConfig.clientID,
+            clientSecret    : googleConfig.clientSecret,
+            callbackURL     : googleConfig.callbackURL
+        },
+        function(token, refreshToken, profile, done) {
+            process.nextTick(function() {
+                User.findOne({ 'google.id' : profile.id }, function(err, user) {
                     if(err){
-                        throw err;
+                        return done(err);
                     }
-                    return done(null, newUser);
+
+                    if(user) {
+                        // if found, log in.
+                        return done(null, user);
+                    } else {
+                        var newUser = new User();
+                        newUser.google.id = profile.id;
+                        newUser.google.token = token;
+                        newUser.name = profile.displayName;
+                        newUser.google.email = profile.emails[0].value;
+                    }
+
+                    // save the user
+                    newUser.save(function(err) {
+                        if(err){
+                            throw err;
+                        }
+                        return done(null, newUser);
+                    });
                 });
             });
-        });
-    }));
+        }));
+    }
+
 };

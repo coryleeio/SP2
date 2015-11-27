@@ -1,10 +1,10 @@
 #!/bin/bash
 
-source ./creds
-
 # This is mostly for easy dev setup
 # bc no docker-compose in windows. x.x
 # (this is fixed now, will switch to compose soon.)
+
+source ./creds
 
 # Stop and remove any old containers
 docker stop login  > /dev/null 2>/dev/null
@@ -50,60 +50,60 @@ set +e
 
 # Run containers.
 docker run --name mongo \
--p $MONGO_PORT:27017 \
+-p 27017:27017 \
 -d mongo
 
 docker run --name login \
--e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
--e SESSION_KEY=$SESSION_KEY \
+-e SHARED_SERVER_SECRET=serverpotatoe \
+-e SESSION_KEY=potatosec \
 -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
 -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
 -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
 --link mongo:mongo \
--p $LOGIN_PORT:$LOGIN_PORT \
+-p 80:80 \
 -d login
 
 docker run \
--e SERVER_REGISTRATION_HOST=$SERVER_REGISTRATION_HOST \
--e SESSION_KEY=$SESSION_KEY \
--e SERVER_REGISTRATION_PORT=$LOGIN_PORT \
--e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
--e HOST=$GAME_HOSTNAME \
--e PORT=$GAME1_PORT \
+-e SERVER_REGISTRATION_HOST=192.168.99.100 \
+-e SESSION_KEY=potatosec \
+-e SERVER_REGISTRATION_PORT=80 \
+-e SHARED_SERVER_SECRET=serverpotatoe \
+-e HOST=testingmyapp.com \
+-e PORT=3001 \
 -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
 -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
 -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
 --name game1 \
--p $GAME1_PORT:3000 \
+-p 3001:3000 \
 --link mongo:mongo \
 -d game
 
 docker run \
--e SERVER_REGISTRATION_HOST=$SERVER_REGISTRATION_HOST \
--e SESSION_KEY=$SESSION_KEY \
--e SERVER_REGISTRATION_PORT=$LOGIN_PORT \
--e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
--e HOST=$GAME_HOSTNAME \
--e PORT=$GAME2_PORT \
+-e SERVER_REGISTRATION_HOST=192.168.99.100 \
+-e SESSION_KEY=potatosec \
+-e SERVER_REGISTRATION_PORT=80 \
+-e SHARED_SERVER_SECRET=serverpotatoe \
+-e HOST=testingmyapp.com \
+-e PORT=3002 \
 -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
 -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
 -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
 --name game2 \
--p $GAME2_PORT:3000 \
+-p 3002:3000 \
 --link mongo:mongo \
 -d game
 
 docker run \
--e SERVER_REGISTRATION_HOST=$SERVER_REGISTRATION_HOST \
--e SESSION_KEY=$SESSION_KEY \
--e SERVER_REGISTRATION_PORT=$LOGIN_PORT \
--e SHARED_SERVER_SECRET=$SHARED_SERVER_SECRET \
--e HOST=$GAME_HOSTNAME \
--e PORT=$GAME3_PORT \
+-e SERVER_REGISTRATION_HOST=192.168.99.100 \
+-e SESSION_KEY=potatosec \
+-e SERVER_REGISTRATION_PORT=80 \
+-e SHARED_SERVER_SECRET=serverpotatoe \
+-e HOST=testingmyapp.com \
+-e PORT=$3003 \
 -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
 -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
 -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
 --name game3 \
--p $GAME3_PORT:3000 \
+-p $3003:3000 \
 --link mongo:mongo \
 -d game
