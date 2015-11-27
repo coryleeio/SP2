@@ -5,7 +5,6 @@ Gameplay is implemented using an entity component system that is shared between 
 
 The start script runs docker commands which create 3 game servers and a login server backed by a mongo database. 
 Users can play as a guest, or login with their google account.
-
 Logged in users will be assigned to the game server with the least load.
 
 ## How to run:
