@@ -1,6 +1,6 @@
 ## What is this?
 A top down sprite based multiplayer spaceship game with authoratative physics written exclusively in Javascript.
-Also includes a simple master server, which supports anonymous play in addition to log in via google.
+Also includes a simple master server, which supports anonymous play in addition to authentication via google.
 
 Gameplay is implemented using an entity component system that is shared between the server and client. 
 
