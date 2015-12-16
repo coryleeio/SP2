@@ -1,0 +1,46 @@
+mongo:
+  build: ./mongodb
+  ports:
+   - "27017"
+login:
+  build: ./login
+  links: 
+    - mongo
+  ports: 
+    - "80:80"
+  env_file: 
+    - "creds"
+    - "ip"
+game1:
+  build: ./game
+  links:
+    - mongo
+  ports:
+    - "3000:3000"
+  environment:
+    - PORT=3000
+  env_file: 
+    - "creds"
+    - "ip"
+game2:
+  build: ./game
+  links:
+    - mongo
+  ports:
+    - "3001:3000"
+  environment:
+    - PORT=3001
+  env_file: 
+    - "creds"
+    - "ip"
+game3:
+  build: ./game
+  links:
+    - mongo
+  ports:
+    - "3002:3000"
+  environment:
+    - PORT=3001
+  env_file: 
+    - "creds"
+    - "ip"

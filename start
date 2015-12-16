@@ -5,24 +5,6 @@
 # (this is fixed now, will switch to compose soon.)
 
 source ./creds
-
-# Stop and remove any old containers
-docker stop login  > /dev/null 2>/dev/null
-docker stop game1  > /dev/null 2>/dev/null
-docker stop game2  > /dev/null 2>/dev/null
-docker stop game3  > /dev/null 2>/dev/null
-docker stop mongo  > /dev/null 2>/dev/null
-docker rm login  -f > /dev/null 2>/dev/null
-docker rm game1  -f > /dev/null 2>/dev/null
-docker rm game2  -f > /dev/null 2>/dev/null
-docker rm game3  -f > /dev/null 2>/dev/null
-docker rm mongo  -f > /dev/null 2>/dev/null
-
-# Remove common code.
-
-# serverclient is shared between client and game servers
-# serverside is shared between login and game servers.
-
 rm -rf ./game/app/app/_sharedClientSide
 rm -rf ./login/app/app/js/_sharedClientSide
 rm -rf ./game/app/_sharedServerSide
@@ -41,69 +23,61 @@ cp -a ./common/sharedServerSide/. ./game/app/_sharedServerSide
 cp -a ./common/sharedServerSide/. ./login/app/_sharedServerSide 
 cp -a ./common/sharedClientSide/. ./login/app/app/public/
 
-# build the various images.
-set -e
-docker build -t mongo ./mongodb/
-docker build -t login ./login/
-docker build -t game ./game/
-set +e
+echo "SERVER_REGISTRATION_HOST=$(docker-machine ip default)" > ip
+echo "HOST=$(docker-machine ip default)" >> ip
 
-# Run containers.
-docker run --name mongo \
--p 27017:27017 \
--d mongo
+# Stop and remove any old containers
+docker-compose stop
+docker-compose rm -f
+docker-compose build
 
-docker run --name login \
--e SHARED_SERVER_SECRET=serverpotatoe \
--e SESSION_KEY=potatosec \
--e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
--e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
--e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
---link mongo:mongo \
--p 80:80 \
--d login
+# Remove common code.
+# serverclient is shared between client and game servers
+# serverside is shared between login and game servers
 
-docker run \
--e SERVER_REGISTRATION_HOST=192.168.99.100 \
--e SESSION_KEY=potatosec \
--e SERVER_REGISTRATION_PORT=80 \
--e SHARED_SERVER_SECRET=serverpotatoe \
--e HOST=192.168.99.100 \
--e PORT=3001 \
--e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
--e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
--e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
---name game1 \
--p 3001:3000 \
---link mongo:mongo \
--d game
+docker-compose up
 
-docker run \
--e SERVER_REGISTRATION_HOST=192.168.99.100 \
--e SESSION_KEY=potatosec \
--e SERVER_REGISTRATION_PORT=80 \
--e SHARED_SERVER_SECRET=serverpotatoe \
--e HOST=192.168.99.100 \
--e PORT=3002 \
--e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
--e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
--e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
---name game2 \
--p 3002:3000 \
---link mongo:mongo \
--d game
+# docker run \
+# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
+# -e SESSION_KEY=potatosec \
+# -e SERVER_REGISTRATION_PORT=80 \
+# -e SHARED_SERVER_SECRET=serverpotatoe \
+# -e HOST=192.168.99.100 \
+# -e PORT=3001 \
+# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
+# --name game1 \
+# -p 3001:3000 \
+# --link mongo:mongo \
+# -d game
 
-docker run \
--e SERVER_REGISTRATION_HOST=192.168.99.100 \
--e SESSION_KEY=potatosec \
--e SERVER_REGISTRATION_PORT=80 \
--e SHARED_SERVER_SECRET=serverpotatoe \
--e HOST=192.168.99.100 \
--e PORT=$3003 \
--e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
--e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
--e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
---name game3 \
--p $3003:3000 \
---link mongo:mongo \
--d game
+# docker run \
+# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
+# -e SESSION_KEY=potatosec \
+# -e SERVER_REGISTRATION_PORT=80 \
+# -e SHARED_SERVER_SECRET=serverpotatoe \
+# -e HOST=192.168.99.100 \
+# -e PORT=3002 \
+# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
+# --name game2 \
+# -p 3002:3000 \
+# --link mongo:mongo \
+# -d game
+
+# docker run \
+# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
+# -e SESSION_KEY=potatosec \
+# -e SERVER_REGISTRATION_PORT=80 \
+# -e SHARED_SERVER_SECRET=serverpotatoe \
+# -e HOST=192.168.99.100 \
+# -e PORT=$3003 \
+# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
+# --name game3 \
+# -p $3003:3000 \
+# --link mongo:mongo \
+# -d game

@@ -12,26 +12,8 @@ Logged in users will be assigned to the game server with the least load.
 ## How to run:
 
 Install docker-toolbox
-
 `https://www.docker.com/docker-toolbox`
 
 Open the docker quickstart terminal, navigate to the project directory and type:
 
 `./start`
-
-### Troubleshooting
-If your servers dont work properly, check the configuration in the start script, you may need to replace the docker host
-ip address if yours differs from mine.
-
-
-Then navigate to your game on port 80 of your docker host
-in brower: 
-
-`http://192.168.99.100`    (yours may vary)
-
-Upon pressing play your game client will be directed to the server with the least load.
-
-You can open multiple tabs in your browser to connect with multiple clients at the same time.
-
-Start script is idempotent and you can run it more than once to rebuild after making changes.
-It should eventually be replaced with a compose file.  (I was running on windows initially, and compose did not support windows until recently.)
