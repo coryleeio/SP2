@@ -2,12 +2,10 @@ var scopes = ['https://www.googleapis.com/auth/plus.me','profile', 'email'];
 var network = require('./network');
 
 function checkAuth() {
-  console.log('check auth')
-  if(googleClientId != null && googleClientId != "") {
+  if(googleClientId != null && googleClientId != "" && googleClientId != undefined && googleClientId != 'undefined') {
     gapi.auth.authorize({client_id: googleClientId, scope: scopes, immediate: true}, handleAuthResult);
   }
   else {
-    console.log('Google auth not started because key was not provided.')
     var playButton = $(".main-login");
     playButton.click(handlePlayClick);
     var googleButton = $(".google-login");

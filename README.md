@@ -16,4 +16,6 @@ Install docker-toolbox
 
 Open the docker quickstart terminal, navigate to the project directory and type:
 
+`docker-machine create--driver virtualbox dev`
+`eval $(docker-machine env dev)`
 `./start`

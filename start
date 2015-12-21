@@ -23,8 +23,8 @@ cp -a ./common/sharedServerSide/. ./game/app/_sharedServerSide
 cp -a ./common/sharedServerSide/. ./login/app/_sharedServerSide 
 cp -a ./common/sharedClientSide/. ./login/app/app/public/
 
-echo "SERVER_REGISTRATION_HOST=$(docker-machine ip default)" > ip
-echo "HOST=$(docker-machine ip default)" >> ip
+echo "SERVER_REGISTRATION_HOST=$(docker-machine ip dev)" > ip
+echo "HOST=$(docker-machine ip dev)" >> ip
 
 # Stop and remove any old containers
 docker-compose stop
