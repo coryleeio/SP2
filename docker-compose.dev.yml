@@ -4,12 +4,15 @@ mongo:
    - "27017"
 login:
   build: ./login
+  environment:
+   - SHARED_SERVER_SECRET=serverpotatoe
+   - SESSION_KEY=potatosec
+   - SERVER_REGISTRATION_PORT=80
   links: 
     - mongo
   ports: 
     - "80:80"
   env_file: 
-    - "creds"
     - "ip"
 game1:
   build: ./game
@@ -19,8 +22,10 @@ game1:
     - "3000:3000"
   environment:
     - PORT=3000
+    - SHARED_SERVER_SECRET=serverpotatoe
+    - SESSION_KEY=potatosec
+    - SERVER_REGISTRATION_PORT=80
   env_file: 
-    - "creds"
     - "ip"
 game2:
   build: ./game
@@ -30,8 +35,10 @@ game2:
     - "3001:3000"
   environment:
     - PORT=3001
+    - SHARED_SERVER_SECRET=serverpotatoe
+    - SESSION_KEY=potatosec
+    - SERVER_REGISTRATION_PORT=80
   env_file: 
-    - "creds"
     - "ip"
 game3:
   build: ./game
@@ -41,6 +48,8 @@ game3:
     - "3002:3000"
   environment:
     - PORT=3001
+    - SHARED_SERVER_SECRET=serverpotatoe
+    - SESSION_KEY=potatosec
+    - SERVER_REGISTRATION_PORT=80
   env_file: 
-    - "creds"
     - "ip"

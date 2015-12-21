@@ -14,8 +14,5 @@ Logged in users will be assigned to the game server with the least load.
 Install docker-toolbox
 `https://www.docker.com/docker-toolbox`
 
-Open the docker quickstart terminal, navigate to the project directory and type:
-
-`docker-machine create--driver virtualbox dev`
-`eval $(docker-machine env dev)`
+Open the docker quickstart terminal, navigate to the project directory and do the following:
 `./start`

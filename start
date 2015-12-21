@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# This is mostly for easy dev setup
-# bc no docker-compose in windows. x.x
-# (this is fixed now, will switch to compose soon.)
+docker-machine create--driver virtualbox dev
+eval $(docker-machine env dev)
+touch creds
 
-source ./creds
 rm -rf ./game/app/app/_sharedClientSide
 rm -rf ./login/app/app/js/_sharedClientSide
 rm -rf ./game/app/_sharedServerSide
@@ -27,57 +26,7 @@ echo "SERVER_REGISTRATION_HOST=$(docker-machine ip dev)" > ip
 echo "HOST=$(docker-machine ip dev)" >> ip
 
 # Stop and remove any old containers
-docker-compose stop
-docker-compose rm -f
-docker-compose build
-
-# Remove common code.
-# serverclient is shared between client and game servers
-# serverside is shared between login and game servers
-
-docker-compose up
-
-# docker run \
-# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
-# -e SESSION_KEY=potatosec \
-# -e SERVER_REGISTRATION_PORT=80 \
-# -e SHARED_SERVER_SECRET=serverpotatoe \
-# -e HOST=192.168.99.100 \
-# -e PORT=3001 \
-# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
-# --name game1 \
-# -p 3001:3000 \
-# --link mongo:mongo \
-# -d game
-
-# docker run \
-# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
-# -e SESSION_KEY=potatosec \
-# -e SERVER_REGISTRATION_PORT=80 \
-# -e SHARED_SERVER_SECRET=serverpotatoe \
-# -e HOST=192.168.99.100 \
-# -e PORT=3002 \
-# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
-# --name game2 \
-# -p 3002:3000 \
-# --link mongo:mongo \
-# -d game
-
-# docker run \
-# -e SERVER_REGISTRATION_HOST=192.168.99.100 \
-# -e SESSION_KEY=potatosec \
-# -e SERVER_REGISTRATION_PORT=80 \
-# -e SHARED_SERVER_SECRET=serverpotatoe \
-# -e HOST=192.168.99.100 \
-# -e PORT=$3003 \
-# -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-# -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-# -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
-# --name game3 \
-# -p $3003:3000 \
-# --link mongo:mongo \
-# -d game
+docker-compose -f docker-compose.dev.yml stop
+docker-compose -f docker-compose.dev.yml rm -f
+docker-compose -f docker-compose.dev.yml build
+docker-compose -f docker-compose.dev.yml up
