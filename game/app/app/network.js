@@ -29,8 +29,6 @@ module.exports = function(app, io) {
     }
 
     client.on('playerInput', function(playerInput){
-      console.log('server received playerInput!');
-      console.log(JSON.stringify(playerInput));
       room.game.updateClientInput(client.id, playerInput);
     });
 

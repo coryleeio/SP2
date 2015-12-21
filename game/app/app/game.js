@@ -39,16 +39,15 @@ Game.prototype.despawnPlayer = function(client){
 Game.prototype.updateClientInput = function(clientId, clientPlayerInput) {
 	var ship = clientIdToShip[clientId];
 	var safeInputUpdate = function(clientPlayerInput, serverPlayerInput) {
-			/*
-				The client is dark and full of terrors
-			*/
-			if(serverPlayerInput && clientPlayerInput) {
-				var inputs = ["up", "down", "left", "right"];
-				inputs.forEach(function(key){
-					// Only true or false, on accepted keys.
-					serverPlayerInput[key] = clientPlayerInput[key] ? true : false; 
-				});
-				console.log("Input after update: ", serverPlayerInput);
+		/*
+			The client is dark and full of terrors
+		*/
+		if(serverPlayerInput && clientPlayerInput) {
+			var inputs = ["up", "down", "left", "right"];
+			inputs.forEach(function(key){
+				// Only true or false, on accepted keys.
+				serverPlayerInput[key] = clientPlayerInput[key] ? true : false; 
+			});
 		}
 	}
 

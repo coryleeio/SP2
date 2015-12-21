@@ -1,6 +1,7 @@
 var scene = require('./_sharedClientSide/canvas').scene;
 var World     = require('./_sharedClientSide/ecs/world');
 var DrawingSystem = require('./_sharedClientSide/ecs/systems/drawingSystem');
+var DustSystem = require('./_sharedClientSide/ecs/systems/dustSystem');
 var ExtrapolationSystem = require('./_sharedClientSide/ecs/systems/extrapolationSystem');
 var PlayerInputSystem = require('./_sharedClientSide/ecs/systems/playerInputSystem');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
@@ -13,9 +14,11 @@ var world = new World();
 var drawingSystem = new DrawingSystem();
 var playerInputSystem = new PlayerInputSystem(world);
 var extrapolationSystem = new ExtrapolationSystem();
+var dustSystem = new DustSystem();
 world.registerSystem(playerInputSystem);
 world.registerSystem(extrapolationSystem);
 world.registerSystem(drawingSystem);	
+world.registerSystem(dustSystem);
 
 var network = {
 	connectToGameServer: function(gameUrl) {

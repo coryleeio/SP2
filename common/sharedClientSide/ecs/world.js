@@ -9,6 +9,7 @@ var World = function() {
     this.updateSystemsByConstructorName = {}; // systems that have an update method.
     this.registrationSystemsByCompoundKey = {};
     this.deregistrationSystemsByCompoundKey = {};
+    this.systemsWithNoCompoundKey = [];
 }
 
 // Increment the simulation by delta MS
@@ -78,12 +79,18 @@ World.prototype.deregisterEntityById = function(entityId) {
 }
 
 World.prototype.registerSystem = function(system) {
-    if (system.componentTypes.length < 1 ) {
-        throw 'Tried to register service ' + system.constructor.name + ' without any componentTypes'; 
+    if(system == null) {
+        throw 'Tried to register null service '; 
+    }
+    var systemKey = utilities.lowerCaseFirstLetter(system.constructor.name);
+    if (system.componentTypes == null || system.componentTypes.length < 1 ) {
+        console.log("Registered " + systemKey + "with no compound key");
+        this.systemsWithNoCompoundKey.push(system);
+        return;
     }
 
     var compoundKey = utilities.calculateCompoundKey(system.componentTypes);
-    var systemKey = utilities.lowerCaseFirstLetter(system.constructor.name);
+    
     system.compoundKey = compoundKey;
 
     if(typeof(system.step) == "function") {
