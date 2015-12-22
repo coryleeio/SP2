@@ -2,6 +2,7 @@ var scene = require('./_sharedClientSide/canvas').scene;
 var World     = require('./_sharedClientSide/ecs/world');
 var DrawingSystem = require('./_sharedClientSide/ecs/systems/drawingSystem');
 var DustSystem = require('./_sharedClientSide/ecs/systems/dustSystem');
+var SkyboxSystem = require('./_sharedClientSide/ecs/systems/skyboxSystem');
 var ExtrapolationSystem = require('./_sharedClientSide/ecs/systems/extrapolationSystem');
 var PlayerInputSystem = require('./_sharedClientSide/ecs/systems/playerInputSystem');
 var gameConstants = require('./_sharedClientSide/config/gameConstants');
@@ -11,14 +12,17 @@ var now;
 
 // build world, register systems.
 var world = new World();
-var drawingSystem = new DrawingSystem();
 var playerInputSystem = new PlayerInputSystem(world);
+var drawingSystem = new DrawingSystem(playerInputSystem);
 var extrapolationSystem = new ExtrapolationSystem();
 var dustSystem = new DustSystem();
+var skyboxSystem = new SkyboxSystem();
+
 world.registerSystem(playerInputSystem);
 world.registerSystem(extrapolationSystem);
 world.registerSystem(drawingSystem);	
 world.registerSystem(dustSystem);
+world.registerSystem(skyboxSystem);
 
 var network = {
 	connectToGameServer: function(gameUrl) {
@@ -35,7 +39,6 @@ var network = {
 					// Send player input over socket if i know what entity to control.
 					var playerInput = playerInputSystem.getPlayerInput();
 					if (playerInput != null) {
-						console.log("Sending:", JSON.stringify(playerInput));
 						socket.emit('playerInput', playerInput);
 					}
 					world.step(delta);

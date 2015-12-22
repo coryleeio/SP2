@@ -84,7 +84,7 @@ World.prototype.registerSystem = function(system) {
     }
     var systemKey = utilities.lowerCaseFirstLetter(system.constructor.name);
     if (system.componentTypes == null || system.componentTypes.length < 1 ) {
-        console.log("Registered " + systemKey + "with no compound key");
+        console.log("Registered " + systemKey + " with no compound key");
         this.systemsWithNoCompoundKey.push(system);
         return;
     }

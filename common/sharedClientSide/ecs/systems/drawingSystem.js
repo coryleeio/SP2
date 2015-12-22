@@ -1,13 +1,15 @@
 var canvas = require('../../canvas');
 var gameConstants = require('../../config/gameConstants');
 var scene = canvas.scene;
+var camera = canvas.camera;
 var Drawable = require('../components/drawable');
 var Transform = require('../components/transform');
 var DrawableTypeFactory = require('../factories/drawableTypeFactory');
 
-function DrawingSystem() {
+function DrawingSystem(playerInputSystem) {
 	this.spriteByEntityId = {};
 	this.componentTypes = [Drawable.name, Transform.name];
+	this.playerInputSystem = playerInputSystem;
 }
 
 DrawingSystem.prototype.update = function(entities, delta) {
@@ -23,6 +25,12 @@ DrawingSystem.prototype.update = function(entities, delta) {
 		sprite.position.x = newPosition.x;
 		sprite.position.y = newPosition.y;
 		sprite.angle = sprite.angle + (transform.angle - sprite.angle) * delta;
+		if(this.playerInputSystem.playerControlledEntityId != null && this.playerInputSystem.playerControlledEntityId == entity.id) {
+			console.log("Focusing camera...");
+			var newCameraPosition = {x: desiredPositionX, y: desiredPositionY, z: camera.position.z};
+			newCameraPosition = BABYLON.Vector3.Lerp(camera.position, newCameraPosition, delta);
+			camera.position = newCameraPosition;
+		}
 	}, this);
 }
 
